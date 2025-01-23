@@ -1,4 +1,11 @@
 .DS_Store
+
+# Ignore Python bytecode
+*.pyc
+__pycache__/
+
+# Ignore database file
+*.sqlite3
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
