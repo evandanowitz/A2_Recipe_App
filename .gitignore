@@ -1,1 +1,8 @@
 .DS_Store
+
+# Ignore Python bytecode
+*.pyc
+__pycache__/
+
+# Ignore database file
+*.sqlite3
