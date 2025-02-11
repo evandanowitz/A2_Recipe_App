@@ -29,3 +29,15 @@ class Recipe(models.Model):
       return [ingredient.strip() for ingredient in self.ingredients.split(',')]
     return []
 
+  def calculate_difficulty(self):
+    # calculates recipe difficulty based on cooking time and ingredients count
+    num_ingredients = len(self.return_ingredients_as_list())
+    if self.cooking_time < 10 and num_ingredients < 4:
+      self.difficulty = 'Easy'
+    elif self.cooking_time < 10 and num_ingredients >= 4:
+      self.difficulty = 'Medium'
+    elif self.cooking_time >= 10 and num_ingredients < 4:
+      self.difficulty = 'Intermediate'
+    else:
+      self.difficulty = 'Hard'
+
