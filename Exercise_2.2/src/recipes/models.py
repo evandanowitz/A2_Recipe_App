@@ -41,3 +41,7 @@ class Recipe(models.Model):
     else:
       self.difficulty = 'Hard'
 
+  def save(self, *args, **kwargs):
+    # overrides the save method in models.py to ensure that difficulty is calculated before saving a Recipe object to the database
+    self.calculate_difficulty()
+    super().save(*args, **kwargs)
