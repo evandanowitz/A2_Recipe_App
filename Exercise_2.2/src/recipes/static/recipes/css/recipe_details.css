@@ -1,0 +1,37 @@
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background-image: url("../images/background-img.jpg");
+  background-size: cover;
+  background-position: center right;
+  background-repeat: no-repeat;
+}
+
+.background-img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: -1;
+  opacity: 0.9;
+}
+
+.card-container {
+  max-width: 500px;
+  border-radius: 10px;
+  padding: 15px; /* Padding inside the card */
+  background: #fdfee9;
+  /* background: rgba(255, 255, 255, 0.9); ADDS BACKGROUND COLOR / TRANSPARENCY */
+}
+
+.card-img-top {
+  width: auto;
+  height: 200px;
+  object-fit: cover;
+  display: block;
+  margin: 0 auto;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+}
