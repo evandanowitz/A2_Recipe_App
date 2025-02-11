@@ -8,6 +8,10 @@ class RecipeListView(ListView):                   # class-based view
   model = Recipe                                  # specify model
   template_name = 'recipes/recipes_home.html'     # specify template
 
+class RecipeDetailView(DetailView):               # class-based view
+  model = Recipe                                  # specify model
+  template_name = 'recipes/recipe_details.html'   # specify template
+
 # This function takes the request coming from the web application and, 
 # returns the template available at recipes/home.html as a response
 def home(request):
