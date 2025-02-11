@@ -16,3 +16,9 @@ class RecipeDetailView(DetailView):               # class-based view
 # returns the template available at recipes/home.html as a response
 def home(request):
   return render(request, 'recipes/recipes_home.html')
+
+def recipe_list(request):
+  # retrieve all recipes from the database
+  recipes = Recipe.objects.all()
+  # pass all the recipes fetched to recipes_list.html file
+  return render(request, 'recipes/recipes_list.html', {'object_list': recipes})
