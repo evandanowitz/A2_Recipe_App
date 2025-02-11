@@ -23,3 +23,9 @@ class Recipe(models.Model):
     # the reverse() function generates the correct URL using this ID
     return reverse ('recipes:recipe_detail', kwargs={'pk': self.pk})
   
+  def return_ingredients_as_list(self):
+    # converts ingredients string into a list
+    if self.ingredients:
+      return [ingredient.strip() for ingredient in self.ingredients.split(',')]
+    return []
+
