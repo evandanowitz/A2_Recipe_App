@@ -18,11 +18,14 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings # allows you to access the MEDIA_URL and MEDIA_ROOT variables that you need to add.
 from django.conf.urls.static import static # provides access to the Django helper function static( ), which allows you to create URLs from local folder names.
+from .views import login_view, logout_view, logout_success
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('', include('recipes.urls')),
-    # path('recipes/', include('recipes.urls'))
+  path('admin/', admin.site.urls),
+  path('', include('recipes.urls')),
+  path('login/', login_view, name='login'), # good practice to give names to your url and view mapping
+  path('logout/', logout_view, name='logout'),
+  path('logout-success/', logout_success, name='logout_success'),
 ]
 
 # extends urlpatterns parameter to include the media info.
