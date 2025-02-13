@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -56,7 +57,7 @@ ROOT_URLCONF = 'recipe_project.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -101,13 +102,15 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+#AUTH
+LOGIN_URL = '/login/'
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'America/New_York'
 
 USE_I18N = True
 
@@ -121,6 +124,14 @@ STATIC_URL = 'static/'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+
+# STATICFILES_DIRS tells Django where to look for static files (CSS, JavaScript, images, etc.) during development.
+# By default, Django only looks for static files inside each app's static/ folder.
+# Your CSS file is inside src/static/css/ (not inside an app).
+# Django does not automatically search there unless you explicitly tell it to using STATICFILES_DIRS.
+STATICFILES_DIRS = [
+  os.path.join(BASE_DIR, 'static'),
+]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
