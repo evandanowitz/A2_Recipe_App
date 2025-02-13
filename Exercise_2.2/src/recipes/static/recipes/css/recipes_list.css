@@ -5,17 +5,18 @@ body {
 
 }
 
+/* Page Title */
 h1 {
   text-align: center;
   font-size: 64px;
 }
 
+/* Table Styling */
 table {
   width: 75%;
   margin: auto;
   border-collapse: collapse;
   background-color: #fff;
-  border: 1;
 }
 
 tr, td {
@@ -28,6 +29,7 @@ tr {
   color: #000;
 }
 
+/* Recipe Card Styling */
 .recipe-name {
   font-size: 25px;
 }
@@ -41,16 +43,18 @@ tr {
   margin: auto;
 }
 
+/* General Anchor Tag / Link Styling */
 a {
-  text-decoration: none;
   color: #007bff;
+  text-decoration: none;
 }
 
 a:hover {
   color: #0056b3;
-  text-decoration: underline;
+  text-decoration: none;
 }
 
+/* Card Image Styling */
 .card-img-top {
   height: 200px;
   object-fit: cover;
@@ -58,6 +62,7 @@ a:hover {
   border-top-right-radius: 0.25rem;
 }
 
+/* Card Styling */
 .card {
   border: none;
   transition: transform 0.2s, box-shadow 0.2s;
@@ -69,13 +74,105 @@ a:hover {
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
 }
 
+/* Card Title */
 .card-title {
   font-size: 1.2rem;
   text-align: center;
 }
 
+/* .btn {
+  display: block;
+  margin: 0 auto;
+  padding: 5px 25px;
+  text-align: center;
+  text-decoration: none;
+}
+
+.btn-primary:hover {
+  text-decoration: none;
+}
+
+.header-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.logout-btn {
+  margin-left: auto;
+  padding: 10px 20px;
+  font-size: 18px;
+  font-weight: bold;
+  margin: 10px;
+  color: white;
+  background-color: #f39c12;
+  border: none;
+  border-radius: 50px;
+  transition: all 0.3s ease;
+}
+.logout-btn:hover {
+  background-color: #e67e22;
+  text-decoration: none;
+  transform: translateY(-5px);
+}
+.logout-btn:active {
+  background-color: #d35400;
+  transform: translateY(0);
+} */
+
+
+/* Button Styling */
 .btn {
   display: block;
   margin: 0 auto;
+  padding: 5px 25px;
   text-align: center;
+}
+
+/* Details Button Styling */
+.btn-primary {
+  background-color: #007bff;
+  /* background-color: #f39c12; */
+  border-radius: 5px;
+  font-weight: bold;
+}
+
+.btn-primary:hover {
+  /* background-color: #0056b3; */
+  background-color: #e67e22;
+  text-decoration: none;
+}
+
+/* Header Container (Aligning the Logout Button) */
+.header-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+/* Logout Button Styling */
+.logout-btn {
+  margin-left: auto;
+  padding: 10px 20px;
+  font-size: 18px;
+  font-weight: bold;
+  margin: 10px;
+  color: white;
+  background-color: #f39c12;
+  border: none;
+  border-radius: 50px;
+  transition: all 0.3s ease;
+}
+
+.logout-btn:hover {
+  background-color: #e67e22;
+  text-decoration: none;
+  transform: translateY(-5px);
+}
+
+.logout-btn:active {
+  background-color: #d35400;
+  transform: translateY(0);
 }
