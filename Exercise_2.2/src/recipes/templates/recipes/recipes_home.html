@@ -10,16 +10,18 @@
 </head>
 
 <body class="homepage">
+  <img src="{% static 'recipes/images/welcome-page-img.jpg' %}" class="background-img" alt="home">
   <div class="container">
     <div class="header-msg">
       <h1>BiteBase</h1>
       <p>Create, save and search for your favorite recipes.</p>
       <p>A recipe collection tool designed to bring simplicity to your kitchen.</p>
     </div>
-    <img src="{% static 'recipes/images/welcome-page-img.jpg' %}" alt="home">
+
     <div class="welcome-buttons">
-      <button mat-raised-button (click)="openUserRegistrationDialog()">Sign Up</button>
-      <button mat-raised-button (click)="openLoginDialog()">Login</button>
+      <!-- <a href="{% url 'login' %}" class="btn btn-primary mat-raised-button">Login</a> -->
+      <a href="{% url 'login' %}" class="btn btn-lg btn-warning shadow btn-custom">Login</a>
+      <a href="#" class="btn btn-lg btn-warning shadow btn-custom">Signup</a>
     </div>
   </div>
 </body>
