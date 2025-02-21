@@ -251,3 +251,46 @@ class ChartGenerationTest(TestCase):
     chart = get_chart('#99', self.test_data) # Non-existent chart type
     self.assertFalse(chart, 'Invalid chart type should not generate a chart')
 
+# ======================================================
+# Access Control Tests (Authentication – Login Required)
+# ======================================================
+
+class AccessControlTest(TestCase):
+  @classmethod
+  def setUpTestData(cls):
+    # Create test user
+    cls.user = User.objects.create_user(
+      username = 'testuser',
+      password = 'testpassword'
+    )
+    # Create test recipe
+    cls.recipe = Recipe.objects.create(
+      name = 'Grilled Cheese',
+      cooking_time = 10,
+      ingredients = 'bread, cheese, butter',
+      difficulty = 'Easy',
+      description = 'A simple grilled cheese sadnwich'
+    )
+
+  # ensure that unauthenticated users are redirected when trying to access protected pages (without logging in)
+  def test_redirect_unauthenticated_user(self):
+    # Test for recipes list page
+    response = self.client.get(reverse('recipes:recipe_list'))
+    self.assertRedirects(response, f'/login/?next=/recipes/') # Path is default Django login behavior
+
+    # Test for recipe details page
+    response = self.client.get(reverse('recipes:recipe_detail', args = [self.recipe.id]))
+    self.assertRedirects(response, f'/login/?next=/recipes/{self.recipe.id}/') # Path is default Django login behavior
+  
+  # ensure that authenticated users can access protected pages (after logging in)
+  def test_authenticated_user_access(self):
+    # Log in test user
+    self.client.login(username = 'testuser', password = 'testpassword')
+
+    # Ensure that recipes list page loads
+    response = self.client.get(reverse('recipes:recipe_list'))
+    self.assertEqual(response.status_code, 200) # Page should load correctly
+
+    # Ensure that individual recipe detail pages load
+    response = self.client.get(reverse('recipes:recipe_detail', args = [self.recipe.id]))
+    self.assertEqual(response.status_code, 200) # Page should load correctly
