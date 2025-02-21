@@ -50,3 +50,8 @@ def recipe_list(request):
     recipes_df = pd.DataFrame(qs_recipes.values()) # Convert QuerySet to DataFrame
     recipes_df = recipes_df.to_html() # Convert DataFrame to HTML table
 
+    if chart_type: # Generate chart if a chart type is selected
+      chart = get_chart(chart_type, pd.DataFrame(qs_recipes.values()))
+      if chart is None: # Check if get_chart() returned None
+        chart_error_msg = 'Invalid chart type selected. Please choose a valid chart.'
+
