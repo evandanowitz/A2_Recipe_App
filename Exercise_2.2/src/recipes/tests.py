@@ -123,3 +123,41 @@ class RecipeViewTest(TestCase):
     response = self.client.get('/recipes/')
     self.assertEqual(response.status_code, 200)
     self.assertTemplateUsed(response, 'recipes/recipes_list.html')
+
+# ========================================
+# Form Tests (All form-related test cases)
+# ========================================
+
+class SearchFormTest(TestCase):
+
+  # ensure that the search form accepts valid input and works properly
+  def test_valid_form(self):
+    form_data = {
+      'recipe_name': 'Pasta',
+      'ingredient': 'Tomato',
+      'difficulty': 'Easy',
+      'chart_type': '#1' # Bar Chart
+    }
+    form = RecipeSearchForm(data = form_data)
+    self.assertTrue(form.is_valid())
+
+  # ensure that invalid data is correctly rejected
+  def test_invalid_recipe_name_too_long(self):
+    long_name = 'A' * 121
+    form_data = {'recipe_name': long_name}
+    form = RecipeSearchForm(data=form_data)
+    self.assertFalse(form.is_valid())
+    self.assertIn('recipe_name', form.errors)
+
+  # ensure that the form initializes without unexpected default values
+  def test_default_values(self):
+    form = RecipeSearchForm()
+    self.assertEqual(form.fields['difficulty'].initial, None)
+    self.assertEqual(form.fields['chart_type'].initial, None)
+
+  # ensure that optional form input fields do not throw validation errors
+  def test_optional_fields(self):
+    form_data = {} # Empty form
+    form = RecipeSearchForm(data=form_data)
+    self.assertTrue(form.is_valid()) # Should be valid even when empty
+
