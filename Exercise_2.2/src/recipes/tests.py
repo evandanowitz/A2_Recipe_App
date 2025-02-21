@@ -67,6 +67,12 @@ class RecipeModelTest(TestCase):
 class RecipeViewTest(TestCase):
   @classmethod
   def setUpTestData(cls): # runs ONCE for all tests
+    # Creates a test user
+    cls.user = User.objects.create_user(
+      username = 'testuser',
+      password = 'testpassword'
+    )
+    # Creates a test recipe
     cls.recipe = Recipe.objects.create(
       name = 'Turkey Sandwich',
       cooking_time = 3,
@@ -74,6 +80,10 @@ class RecipeViewTest(TestCase):
       difficulty = 'Easy',
       description = 'A simple sandwich with sliced turkey and cheese'
     )
+
+  def setUp(self):
+    # Logs in test user before each test
+    self.client.login(username = 'testuser', password = 'testpassword')
 
 # ===============
 # Page Load Tests
