@@ -46,3 +46,7 @@ def recipe_list(request):
     if difficulty:
       qs_recipes = qs_recipes.filter(difficulty=difficulty) # Exact match
 
+  if qs_recipes.exists(): # Convert the QuerySet to a Pandas DataFrame (if there are matching recipes/results)
+    recipes_df = pd.DataFrame(qs_recipes.values()) # Convert QuerySet to DataFrame
+    recipes_df = recipes_df.to_html() # Convert DataFrame to HTML table
+
