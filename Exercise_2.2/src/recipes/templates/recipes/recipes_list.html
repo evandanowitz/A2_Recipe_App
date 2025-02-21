@@ -75,6 +75,24 @@
     </div>
     {% endif %}
 
+    <!-- Display Chart (if a chart was generated) -->
+    {% if chart %} <!-- Checks if a chart was generated. Ensures it only appears when user selects a chart type -->
+    <div class="text-center">
+      <h4>
+        {% if form.chart_type.value == '#1' %}
+        Data Analysis – Bar Chart
+        {% elif form.chart_type.value == '#2' %}
+        Data Analysis – Pie Chart
+        {% elif form.chart_type.value == '#3' %}
+        Data Analysis – Line Chart
+        {% else %}
+        Data Visualization Chart
+        {% endif %}
+      </h4>
+      <!-- Displays chart as image -->
+      <img src="data:image/png;base64, {{ chart }}" class="img-fluid shadow-lg rounded mb-5" alt="Recipe Chart">
+    </div>
+    {% endif %}
 
     <div class="row">
       {% for object in object_list %}
