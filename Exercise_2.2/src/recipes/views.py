@@ -55,3 +55,11 @@ def recipe_list(request):
       if chart is None: # Check if get_chart() returned None
         chart_error_msg = 'Invalid chart type selected. Please choose a valid chart.'
 
+  # Pass recipes, form, and chart to the template (recipes_list.html file)
+  return render(request, 'recipes/recipes_list.html', {
+    'object_list': qs_recipes,            # Pass the filtered recipes 
+    'form': form,                         # Pass the search form
+    'recipes_df': recipes_df,             # Pass the DataFrame for table display
+    'chart': chart,                       # Pass the generated chart
+    'chart_error_msg': chart_error_msg    # Pass the chart error message 
+  })
