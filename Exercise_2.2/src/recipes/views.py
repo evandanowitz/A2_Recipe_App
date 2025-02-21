@@ -37,3 +37,12 @@ def recipe_list(request):
   difficulty = request.GET.get('difficulty', '') # Get difficulty level selection from the search form
   chart_type = request.GET.get('chart_type', '') # Get chart type selection from the search form
 
+  # Apply filters based on user input (only if any filter is present)
+  if recipe_name or ingredient or difficulty:
+    if recipe_name:
+      qs_recipes = qs_recipes.filter(name__icontains=recipe_name) # Partial match
+    if ingredient:
+      qs_recipes = qs_recipes.filter(ingredients__icontains=ingredient) # Partial match
+    if difficulty:
+      qs_recipes = qs_recipes.filter(difficulty=difficulty) # Exact match
+
