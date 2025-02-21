@@ -1,6 +1,11 @@
 from django.test import TestCase
 from django.shortcuts import reverse
 from .models import Recipe
+from django.contrib.auth.models import User # Import User model for authentication testsing (Django-included)
+from .forms import RecipeSearchForm # Import the search form
+from .utils import get_chart
+import pandas as pd
+import base64
 
 # =================================
 # Model Tests: Testing Recipe Model
