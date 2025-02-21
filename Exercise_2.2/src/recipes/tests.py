@@ -161,3 +161,58 @@ class SearchFormTest(TestCase):
     form = RecipeSearchForm(data=form_data)
     self.assertTrue(form.is_valid()) # Should be valid even when empty
 
+# ==========================
+# Search Functionality Tests
+# ==========================
+
+class RecipeSearchTest(TestCase):
+  @classmethod
+  def setUpTestData(cls):
+    # Creates a test user
+    cls.user = User.objects.create_user(
+      username = 'testuser',
+      password = 'testpassword'
+    )
+    # Create test recipes for filtering
+    cls.cake = Recipe(name = 'Chocolate Cake', cooking_time = 45, ingredients = 'flour, sugar, cocoa', difficulty = 'Hard', description = 'A rich chocolate cake')
+    cls.ice_cream = Recipe(name = 'Vanilla Ice Cream', cooking_time = 10, ingredients = 'milk, sugar, vanilla', difficulty = 'Easy', description = 'Homemade vanilla ice cream')
+    cls.chicken = Recipe(name = 'Grilled Chicken', cooking_time = 30, ingredients = 'chicken, salt, pepper', difficulty = 'Medium', description = 'Grilled chicken breast')
+    cls.soup = Recipe(name = 'Tomato Soup', cooking_time = 15, ingredients = 'tomato, salt, basil', difficulty = 'Easy', description = 'A warm tomato soup')
+    
+    # Manually set difficulty levels before saving
+    cls.cake.difficulty = "Hard"
+    cls.ice_cream.difficulty = "Easy"
+    cls.chicken.difficulty = "Medium"
+    cls.soup.difficulty = "Easy"
+
+    # Bypass save() method and manually insert into DB without overriding difficulty
+    Recipe.objects.bulk_create([cls.cake, cls.ice_cream, cls.chicken, cls.soup])
+
+  def setUp(self):
+    # Logs in test user before each test
+    self.client.login(username = 'testuser', password = 'testpassword')
+
+  def test_search_by_recipe_name(self):
+    response = self.client.get(reverse('recipes:recipe_list'), {'recipe_name': 'Cake'})
+    self.assertContains(response, 'Chocolate Cake')
+    self.assertNotContains(response, 'Vanilla Ice Cream')
+
+  def test_search_by_ingredient(self):
+    response = self.client.get(reverse('recipes:recipe_list'), {'ingredient': 'tomato'})
+    self.assertContains(response, 'Tomato Soup')
+    self.assertNotContains(response, 'Grilled Chicken')
+
+  def test_search_by_difficulty(self):
+    response = self.client.get(reverse('recipes:recipe_list'), {'difficulty': 'Easy'})
+    self.assertContains(response, 'Vanilla Ice Cream') # Should appear
+    self.assertContains(response, 'Tomato Soup') # Should appear
+    self.assertNotContains(response, 'Chocolate Cake') # Should NOT appear ('Hard')
+    self.assertNotContains(response, 'Grilled Chicken') # Should NOT appear ('Medium')
+
+  def test_search_with_empty_fields(self):
+    response = self.client.get(reverse('recipes:recipe_list'), {}) # No filters applied
+    self.assertContains(response, 'Chocolate Cake')
+    self.assertContains(response, 'Vanilla Ice Cream')
+    self.assertContains(response, 'Grilled Chicken')
+    self.assertContains(response, 'Tomato Soup')
+
