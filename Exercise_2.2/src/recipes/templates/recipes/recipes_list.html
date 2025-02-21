@@ -20,7 +20,7 @@
           Search Form
         </button>
         {% comment %} Logout Button (Link is better for navigation) {% endcomment %}
-      <a href="{% url 'logout' %}" class="btn btn-lg btn-warning shadow logout-btn">Logout</a>
+        <a href="{% url 'logout' %}" class="btn btn-lg btn-warning shadow logout-btn">Logout</a>
       </div>
     </div>
 
@@ -109,6 +109,44 @@
       {% endfor %}
     </div>
   </div>
+
+  <!-- Bootstrap JavaScript for the "Collapse" feature to work -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+  <!-- JavaScript function to update button text based on whether search form is displayed or not -->
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      let toggleButton = document.getElementById("toggleButton");
+      let searchForm = document.getElementById("searchForm");
+
+      // Check localStorage for the search form's current state (open or closed)
+      if (localStorage.getItem("searchFormOpen") === "true") {
+        searchForm.classList.add("show");
+      }
+
+      // Listen for Bootstrap's collapse events to update button text
+      searchForm.addEventListener("show.bs.collapse", function () {
+        toggleButton.textContent = "Hide Search Form";
+        localStorage.setItem("searchFormOpen", "true");
+      });
+
+      searchForm.addEventListener("hide.bs.collapse", function () {
+        toggleButton.textContent = "Search Form";
+        localStorage.setItem("searchFormOpen", "false");
+      });
+
+      // Check if there are search parameters in the URL
+      if (window.location.search) {
+        // Remove all search parameters from the URL without reloading the page
+        window.history.replaceState(
+          {},
+          document.title,
+          window.location.pathname
+        );
+      }
+    });
+  </script>
+
 </body>
 
 </html>
