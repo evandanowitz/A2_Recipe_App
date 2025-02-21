@@ -3,6 +3,10 @@ from .models import Recipe                                    # to access the Re
 from django.views.generic import ListView, DetailView         # to display lists and details
 from django.contrib.auth.mixins import LoginRequiredMixin     # to protect class-based view
 from django.contrib.auth.decorators import login_required     # to protect function-based view
+from django.contrib import messages                           # import Django messages framework
+from .forms import RecipeSearchForm                           # import RecipeSearchForm class
+import pandas as pd                                           # import pandas. refer to it as 'pd'
+from .utils import get_chart                                  # to call the get_chart() function
 
 # Create your views here.
 
@@ -21,7 +25,15 @@ def home(request):
 
 @login_required # protected
 def recipe_list(request):
-  # retrieve all recipes from the database
-  recipes = Recipe.objects.all()
-  # pass all the recipes fetched to recipes_list.html file
-  return render(request, 'recipes/recipes_list.html', {'object_list': recipes})
+  form = RecipeSearchForm(request.GET or None) # Create an instance of RecipeSearchForm that was defined in recipes/forms.py. Allow GET requests for filtering
+  qs_recipes = Recipe.objects.all() # Retrieve all recipes from the database (a QuerySet)
+  recipes_df = None # Initialize pandas DataFrame as None
+  chart = None # Initialize chart variable as None
+  chart_error_msg = None # Initialize an error message variable
+
+  # Get search input from the form
+  recipe_name = request.GET.get('recipe_name', '').strip() # Get recipe name input from the search form
+  ingredient = request.GET.get('ingredient', '').strip() # Get ingredient input from the search form
+  difficulty = request.GET.get('difficulty', '') # Get difficulty level selection from the search form
+  chart_type = request.GET.get('chart_type', '') # Get chart type selection from the search form
+
