@@ -216,3 +216,38 @@ class RecipeSearchTest(TestCase):
     self.assertContains(response, 'Grilled Chicken')
     self.assertContains(response, 'Tomato Soup')
 
+# ======================
+# Chart Generation Tests
+# ======================
+
+class ChartGenerationTest(TestCase):
+  @classmethod
+  def setUpTestData(cls):
+    # Create test recipe data
+    cls.test_data = pd.DataFrame({
+      'name': ['Chocolate Ckae', 'Vanilla Ice Cream', 'Grilled Chicken', 'Tomato Soup'],
+      'cooking_time': [45, 10, 30, 15],
+      'ingredients': ['flour, sugar, cocoa', 'milk, sugar, vanilla', 'chicken, salt, pepper', 'tomato, salt, basil'],
+      'difficulty': ['Hard', 'Easy', 'Medium', 'Easy']
+    })
+  
+  # ensure that a bar chart is valid and generates correctly
+  def test_valid_bar_chart(self):
+    chart = get_chart('#1', self.test_data)
+    self.assertTrue(isinstance(chart, str) and chart.startswith('iVBOR'), 'Bar Chart output is invalid')
+
+  # ensure that a pie chart is valid and generates correctly
+  def test_valid_pie_chart(self):
+    chart = get_chart('#2', self.test_data)
+    self.assertTrue(isinstance(chart, str) and chart.startswith('iVBOR'), 'Pie Chart output is invalid')
+
+  # ensure that a line chart is valid and generates correctly
+  def test_valid_line_chart(self):
+    chart = get_chart('#3', self.test_data)
+    self.assertTrue(isinstance(chart, str) and chart.startswith('iVBOR'), 'Line Chart output is invalid')
+
+  # ensure that an invalid chart type returns None or does not generate a chart at all
+  def test_invalid_chart_type(self):
+    chart = get_chart('#99', self.test_data) # Non-existent chart type
+    self.assertFalse(chart, 'Invalid chart type should not generate a chart')
+
