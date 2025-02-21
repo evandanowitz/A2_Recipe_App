@@ -14,6 +14,39 @@
     <div class="header-container">
       <h1 class="text-center mb-4">All Recipes</h1>
       <a href="{% url 'logout' %}" class="btn btn-lg btn-warning shadow logout-btn">Logout</a>
+    <div class="collapse" id="searchForm">
+      <div class="row justify-content-center mb-4">
+        <div class="card shadow">
+          <div class="card-body">
+            <h4 class="card-title text-center">Search for Recipes</h4>
+            <hr>
+
+            <form action="" method="GET">
+              {% csrf_token %} {% comment %} Security token for form submission {% endcomment %}
+
+              <!-- First Row: Recipe Name & Ingredient -->
+              <div class="row mb-3">
+                <div class="col-6 col-md-6">{{ form.recipe_name }}</div>
+                <div class="col-6 col-md-6">{{ form.ingredient }}</div>
+              </div>
+              <!-- Second Row: Difficulty Level & Chart Type -->
+              <div class="row mb-3">
+                <div class="col-6 col-md-6">{{ form.difficulty }}</div>
+                <div class="col-6 col-md-6">{{ form.chart_type }}</div>
+              </div>
+              <!-- Search Button -->
+              <div class="row">
+                <div class="text-center d-flex justify-content-center gap-4">
+                  <button type="submit" class="btn btn-success w-50 search-btn">Search</button>
+                  <a href="{% url 'recipes:recipe_list' %}" class="btn btn-success w-50 reset-btn">Reset</a>
+                </div>
+              </div>
+
+            </form>
+
+          </div>
+        </div>
+      </div>
     </div>
 
     <div class="row">
