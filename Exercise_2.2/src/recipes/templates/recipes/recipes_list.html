@@ -15,11 +15,17 @@
       <h1 class="me-auto">Recipes</h1>
 
       <div class="d-flex gap-2">
+        <!-- Search Form Button -->
         <button id="toggleButton" class="btn btn-primary search-form-btn" type="button" data-bs-toggle="collapse"
           data-bs-target="#searchForm">
           Search Form
         </button>
         {% comment %} Logout Button (Link is better for navigation) {% endcomment %}
+
+        <!-- Create Recipe Button -->
+        <a href="{% url 'recipes:create_recipe' %}" class="btn btn-lg btn-warning shadow logout-btn">Create Recipe</a>
+
+        <!-- Logout Button (Navigation) -->
         <a href="{% url 'logout' %}" class="btn btn-lg btn-warning shadow logout-btn">Logout</a>
       </div>
     </div>
