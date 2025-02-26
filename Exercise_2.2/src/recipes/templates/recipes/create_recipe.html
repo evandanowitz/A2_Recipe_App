@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+{% load static %} <!-- Ensures Django knows how to handle static files -->
+<html lang="en">
+
+<head>
+  <title>BiteBase - Create Recipe</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="{% static 'recipes/css/create_recipe.css' %}">
+</head>
+
+<body class="d-flex align-items-center justify-content-center vh-100">
+  <img src="{% static 'recipes/images/signup-bg-img.jpg' %}" class="background-img" alt="Background Image">
+  <!-- Card for Create Recipe Form -->
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-md-5">
+        <div class="card shadow p-4 rounded-4">
+          <div class="card-body">
+            <!-- <h4 class="card-title text-center mb-3">Create a Recipe</h4> -->
+            <h4 class="text-center mb-3">Create a Recipe</h4>
+            <hr>
+
+            <!-- Display success messages and hide form when recipe is successfully created -->
+            {% if success_message %}
+            <div class="alert alert-success text-center">
+              <p>{{ success_message }}</p>
+              <div class="d-grid gap-2">
+                <a href="{% url 'recipes:recipe_list' %}" class="btn btn-success">View All Recipes</a>
+                <a href="{% url 'recipes:create_recipe' %}" class="btn btn-secondary">Create Another Recipe</a>
+              </div>
+            </div>
+            {% else %}
+
+            <!-- Check for/display error messages -->
+            {% if error_message %}
+            <div class="alert alert-danger">
+              {{ error_message|safe }}
+            </div>
+            {% endif %}
+
+            <!-- Create Recipe Form -->
+            <form action="" method="POST" enctype="multipart/form-data">
+              {% csrf_token %} <!-- Security token for form submission -->
+
+              <!-- Recipe Name (Required) -->
+              <div class="mb-3">
+                <label for="{{ form.name.id_for_label }}" class="form-label">
+                  Recipe Name: <span class="text-danger">*</span>
+                </label>
+                {{ form.name }}
+              </div>
+
+              <!-- Cooking Time (Required) -->
+              <div class="mb-3">
+                <label for="{{ form.cooking_time.id_for_label }}" class="form-label">
+                  Cooking Time (minutes): <span class="text-danger">*</span>
+                </label>
+                {{ form.cooking_time }}
+              </div>
+
+              <!-- Ingredients (Required) -->
+              <div class="mb-3">
+                <label for="{{ form.ingredients.id_for_label }}" class="form-label">
+                  Ingredients (comma-separated): <span class="text-danger">*</span>
+                </label>
+                {{ form.ingredients }}
+              </div>
+
+              <!-- Description (Required) -->
+              <div class="mb-3">
+                <label for="{{ form.description.id_for_label }}" class="form-label">
+                  Description: <span class="text-danger">*</span>
+                </label>
+                {{ form.description }}
+              </div>
+
+              <!-- Image Upload (Optional) -->
+              <div class="mb-3">
+                <label for="{{ form.pic.id_for_label }}" class="form-label">Recipe Image:</label>
+                {{ form.pic }}
+              </div>
+
+              <!-- Buttons -->
+              <div class="d-flex justify-content-between mt-3">
+                <!-- <button type="submit" class="btn btn-primary w-50 me-2">Create Recipe</button> -->
+                <button type="submit" class="btn flex-grow-1 me-2 btn-custom">Create Recipe</button>
+                <!-- <a href="{% url 'recipes:recipe_list' %}" class="btn btn-secondary w-50">Back to Recipes</a> -->
+                <a href="{% url 'recipes:recipe_list' %}" class="btn flex-grow-1 btn-custom">Back to Recipes</a>
+              </div>
+
+            </form>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+
+</html>
