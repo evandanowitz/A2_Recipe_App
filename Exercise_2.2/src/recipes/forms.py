@@ -1,6 +1,7 @@
 # This file will be to specify the search form fields
 
 from django import forms
+from .models import Recipe # Import Recipe model
 
 # Specify chart type choices as a tuple
 CHART_CHOICES = (
@@ -59,3 +60,20 @@ class RecipeSearchForm(forms.Form):
       'class': 'form-select'
     })
   )
+
+# Use forms.ModelForm when form is directly linked to a database model. Automatically includes fields from the model, requiring less code.
+class CreateRecipeForm(forms.ModelForm):
+  class Meta:
+    model = Recipe # Connects form to Recipe model
+    # This generates the form fields automatically based on the Recipe model and save the data directly to the database when the form is submitted.
+    fields = ['name', 'cooking_time', 'ingredients', 'description', 'pic'] # Include model fields in the form
+  
+  def __init__(self, *args, **kwargs):
+    super(CreateRecipeForm, self).__init__(*args, **kwargs)
+    for field_name, field in self.fields.items():
+      field.widget.attrs.update({'class': 'form-control'})
+    
+    self.fields['ingredients'].widget.attrs.update({'rows': 3})
+    self.fields['description'].widget.attrs.update({'rows': 3})
+
+  pic = forms.ImageField(required=False) # Uploading an image is optional. If user does not, default image is used.
