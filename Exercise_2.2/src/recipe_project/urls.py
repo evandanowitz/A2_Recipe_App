@@ -18,7 +18,7 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings # allows you to access the MEDIA_URL and MEDIA_ROOT variables that you need to add.
 from django.conf.urls.static import static # provides access to the Django helper function static( ), which allows you to create URLs from local folder names.
-from .views import login_view, logout_view, logout_success
+from .views import login_view, logout_view, logout_success, signup_view
 
 urlpatterns = [
   path('admin/', admin.site.urls),
@@ -26,6 +26,7 @@ urlpatterns = [
   path('login/', login_view, name='login'), # good practice to give names to your url and view mapping
   path('logout/', logout_view, name='logout'),
   path('logout-success/', logout_success, name='logout_success'),
+  path('signup/', signup_view, name='signup'), # Allows users to access the signup page by visiting http...url.../signup/
 ]
 
 # extends urlpatterns parameter to include the media info.
