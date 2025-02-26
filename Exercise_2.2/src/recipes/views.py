@@ -7,6 +7,7 @@ from django.contrib import messages                           # import Django me
 from .forms import RecipeSearchForm                           # import RecipeSearchForm class
 import pandas as pd                                           # import pandas. refer to it as 'pd'
 from .utils import get_chart                                  # to call the get_chart() function
+from .forms import CreateRecipeForm
 
 # Create your views here.
 
@@ -63,3 +64,25 @@ def recipe_list(request):
     'chart': chart,                       # Pass the generated chart
     'chart_error_msg': chart_error_msg    # Pass the chart error message 
   })
+
+def create_recipe_view(request):
+  error_message = None # Initialize error_message variable
+  success_message = None # Initialize success_message variable
+
+  if request.method == 'POST':
+    form = CreateRecipeForm(request.POST, request.FILES) # Include FILES for image uploads
+    if form.is_valid():
+      recipe = form.save() # Save the new recipe to the database
+      success_message = "Recipe created successfully!"
+      form = CreateRecipeForm() # Reset the form
+    else:
+      error_message = form.errors.as_ul() # Display form errors
+  else:
+    form = CreateRecipeForm() # Display an empty form
+
+  context = {
+    'form': form,
+    'error_message': error_message,
+    'success_message': success_message,
+  }
+  return render(request, 'recipes/create_recipe.html', context)
