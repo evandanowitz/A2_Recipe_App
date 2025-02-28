@@ -38,7 +38,9 @@
     <!-- Back Button -->
     <div class="card-footer text-center d-flex justify-content-center gap-3">
       <a href="{% url 'recipes:recipe_list' %}" class="btn btn-secondary w-50">Back to Recipes</a>
-      <a href="#" class="btn btn-secondary w-50">Edit Recipe</a>
+      <!-- 'recipe.pk' dynamically passes the current recipe's ID into the URL -->
+      <!-- Example: if the recipe ID is '7', the button will link to: /recipes/7/edit/ -->
+      <a href="{% url 'recipes:edit_recipe' pk=recipe.pk %}" class="btn btn-secondary w-50">Edit Recipe</a>
     </div>
   </div>
 </body>
