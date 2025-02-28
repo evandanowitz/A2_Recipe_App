@@ -16,7 +16,6 @@
       <div class="col-md-5">
         <div class="card shadow p-4 rounded-4">
           <div class="card-body">
-            <!-- <h4 class="card-title text-center mb-3">Create a Recipe</h4> -->
             <h4 class="text-center mb-3">Create a Recipe</h4>
             <hr>
 
@@ -25,8 +24,11 @@
             <div class="alert alert-success text-center">
               <p>{{ success_message }}</p>
               <div class="d-grid gap-2">
+                {% if recipe %}
+                <a href="{% url 'recipes:recipe_detail' pk=recipe.pk %}" class="btn btn-success">View New Recipe!</a>
+                {% endif %}
                 <a href="{% url 'recipes:recipe_list' %}" class="btn btn-success">View All Recipes</a>
-                <a href="{% url 'recipes:create_recipe' %}" class="btn btn-secondary">Create Another Recipe</a>
+                <a href="{% url 'recipes:create_recipe' %}" class="btn btn-success">Create Another Recipe</a>
               </div>
             </div>
             {% else %}
