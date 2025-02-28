@@ -113,3 +113,18 @@ def edit_recipe_view(request, pk): # Accepts the primary key (pk) of the recipe 
     'success_message': success_message, # Pass success_message object
   })
 
+def delete_recipe_view(request, pk):
+  recipe = get_object_or_404(Recipe, pk=pk) # Retrieve the recipe object from the database or return a 404 error if not found
+
+  if request.method == 'POST':
+    recipe_name = recipe.name # Store name before deleting
+    recipe.delete() # Delete the recipe from the database
+
+    # Use Django messages framework to pass success message
+    messages.success(request, f"Recipe '{recipe_name}' was successfully deleted.")
+
+    # Redirect to all recipes list
+    return redirect('recipes:recipe_list')
+  
+  return redirect('recipes:recipe_list') # Redirect back if method is not POST
+
