@@ -8,4 +8,5 @@ urlpatterns = [
   path('recipes/', recipe_list, name='recipe_list'),
   path('recipes/<int:pk>/', RecipeDetailView.as_view(), name='recipe_detail'), # <pk> param indicates the primary key of the object
   path('create-recipe/', create_recipe_view, name='create_recipe'), # DOES NOT require an existing recipe ID ( no <pk> )
+  path('recipes/<int:pk>/edit/', edit_recipe_view, name='edit_recipe'), # Requires an existing recipe ID ( <pk> )
 ]
