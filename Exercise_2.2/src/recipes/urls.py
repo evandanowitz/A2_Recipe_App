@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import home, recipe_list, RecipeDetailView, create_recipe_view, edit_recipe_view
+from .views import home, recipe_list, RecipeDetailView, create_recipe_view, edit_recipe_view, delete_recipe_view
 
 app_name = 'recipes'
 
@@ -9,4 +9,5 @@ urlpatterns = [
   path('recipes/<int:pk>/', RecipeDetailView.as_view(), name='recipe_detail'), # <pk> param indicates the primary key of the object
   path('create-recipe/', create_recipe_view, name='create_recipe'), # DOES NOT require an existing recipe ID ( no <pk> )
   path('recipes/<int:pk>/edit/', edit_recipe_view, name='edit_recipe'), # Requires an existing recipe ID ( <pk> )
+  path('recipes/<int:pk>/delete/', delete_recipe_view, name='delete_recipe'), # Requires an existing recipe ID ( <pk> ). The delete button in edit_recipe.html now links to this view
 ]
