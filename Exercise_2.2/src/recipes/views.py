@@ -1,4 +1,5 @@
-from django.shortcuts import render                           # imported by default
+from django.shortcuts import render, redirect                 # imported render and redirect ( imported by default? )
+from django.shortcuts import get_object_or_404                # import
 from .models import Recipe                                    # to access the Recipe model
 from django.views.generic import ListView, DetailView         # to display lists and details
 from django.contrib.auth.mixins import LoginRequiredMixin     # to protect class-based view
@@ -68,6 +69,7 @@ def recipe_list(request):
 def create_recipe_view(request):
   error_message = None # Initialize error_message variable
   success_message = None # Initialize success_message variable
+  recipe = None # Initialize recipe variable
 
   if request.method == 'POST':
     form = CreateRecipeForm(request.POST, request.FILES) # Include FILES for image uploads
@@ -82,7 +84,32 @@ def create_recipe_view(request):
 
   context = {
     'form': form,
+    'recipe': recipe,
     'error_message': error_message,
     'success_message': success_message,
   }
   return render(request, 'recipes/create_recipe.html', context)
+
+def edit_recipe_view(request, pk): # Accepts the primary key (pk) of the recipe to edit
+  error_message = None
+  success_message = None
+  recipe = get_object_or_404(Recipe, pk=pk) # Retrieve the recipe object from the database or return a 404 error if not found
+
+  if request.method == 'POST': # If the form is submitted (In Django forms, updating existing data is done with POST requests, not PUT). PUT mainly used for APIs
+    form = CreateRecipeForm(request.POST, request.FILES, instance=recipe) # Populate form with the submitted data
+    if form.is_valid(): # Validate the form
+      form.save() # Save the changes to the database
+      success_message = f"'{recipe.name}' has been successfully updated!"
+      return render(request, 'recipes/edit_recipe.html', {'success_message': success_message, 'recipe': recipe}) # Load the edit recipe form template (Once recipe is updated, user is sent back to view the recipe)
+    else:
+      error_message = form.errors.as_ul() # Display form errors
+  else:
+    form = CreateRecipeForm(instance=recipe) # Populate the form with the existing recipe data
+
+  return render(request, 'recipes/edit_recipe.html', {
+    'form': form, # Pass form object
+    'recipe': recipe, # Pass recipe object
+    'error_message': error_message, # Pass error_message object
+    'success_message': success_message, # Pass success_message object
+  })
+
