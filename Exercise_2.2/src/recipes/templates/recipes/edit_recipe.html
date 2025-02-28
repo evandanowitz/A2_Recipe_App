@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+{% load static %} <!-- Ensures Django knows how to handle static files -->
+<html lang="en">
+
+<head>
+  <title>BiteBase - Edit Recipe</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="{% static 'recipes/css/edit_recipe.css' %}">
+</head>
+
+<body class="d-flex align-items-center justify-content-center vh-100">
+  <img src="{% static 'recipes/images/signup-bg-img.jpg' %}" class="background-img" alt="Background Image">
+
+  <!-- Card for Edit Recipe Form -->
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-md-5">
+        <div class="card shadow p-4 rounded-4">
+          <div class="card-body">
+
+            <!-- Display success messages and hide form when recipe is successfully edited -->
+            {% if success_message %}
+            <div class="alert alert-success text-center">
+              <p>{{ success_message }}</p>
+              <hr>
+              <div class="d-grid gap-3">
+                {% if recipe %}
+                <a href="{% url 'recipes:recipe_detail' pk=recipe.pk %}" class="btn btn-success">Back to
+                  {{recipe.name}}</a>
+                {% endif %}
+                <a href="{% url 'recipes:recipe_list' %}" class="btn btn-success">View All Recipes</a>
+                <a href="{% url 'recipes:create_recipe' %}" class="btn btn-success">Create a New Recipe</a>
+              </div>
+            </div>
+            {% endif %}
+
+            {# Check for/display error messages #}
+            {% if error_message %}
+            <div class="alert alert-danger text-center">
+              <p>{{ error_message|safe }}</p>
+              <hr>
+              <div class="d-grid gap-3">
+                <a href="{% url 'recipes:edit_recipe' pk=recipe.pk %}" class="btn btn-secondary w-50">Try Again!</a>
+                <a href="{% url 'recipes:recipe_detail' pk=recipe.pk %}" class="btn btn-success">Back to
+                  {{recipe.name}}</a>
+                <a href="{% url 'recipes:recipe_list' %}" class="btn btn-success">View All Recipes</a>
+                <a href="{% url 'recipes:create_recipe' %}" class="btn btn-success">Create a New Recipe</a>
+              </div>
+            </div>
+            {% endif %}
+
+            {% if not success_message and not error_message %}
+            <!-- Edit Form Section -->
+            <h4 class="text-center mb-3">Edit Recipe</h4>
+            <hr>
+
+            <!-- Edit Recipe Form -->
+            <form action="" method="POST" enctype="multipart/form-data">
+              {% csrf_token %} <!-- Security token for form submission -->
+
+              <!-- Recipe Name (Required) -->
+              <div class="mb-3">
+                <label for="{{ form.name.id_for_label }}" class="form-label">
+                  Recipe Name: <span class="text-danger">*</span>
+                </label>
+                {{ form.name }}
+              </div>
+
+              <!-- Cooking Time (Required) -->
+              <div class="mb-3">
+                <label for="{{ form.cooking_time.id_for_label }}" class="form-label">
+                  Cooking Time (minutes): <span class="text-danger">*</span>
+                </label>
+                {{ form.cooking_time }}
+              </div>
+
+              <!-- Ingredients (Required) -->
+              <div class="mb-3">
+                <label for="{{ form.ingredients.id_for_label }}" class="form-label">
+                  Ingredients (comma-separated): <span class="text-danger">*</span>
+                </label>
+                {{ form.ingredients }}
+              </div>
+
+              <!-- Description (Required) -->
+              <div class="mb-3">
+                <label for="{{ form.description.id_for_label }}" class="form-label">
+                  Description: <span class="text-danger">*</span>
+                </label>
+                {{ form.description }}
+              </div>
+
+              <!-- Recipe Image Upload (Optional) -->
+              <div class="mb-3">
+                <label for="{{ form.pic.id_for_label }}" class="form-label">Upload New Image:</label>
+                <!-- Manually creating the file input field instead of using "{{ form.pic }}" -->
+                <!-- {{ form.pic }} renders Django's default file input, including unwanted elements -->
+                <input type="file" name="{{ form.pic.html_name }}" id="{{ form.pic.id_for_label }}"
+                  class="form-control">
+              </div>
+
+              <!-- Save Recipe Button -->
+              <div class="d-flex justify-content-between mt-3">
+                <button type="submit" class="btn flex-grow-1 me-2 btn-custom">
+                  Save Recipe
+                </button>
+              </div>
+
+              <!-- Back to Recipe Button -->
+              <div class="d-flex justify-content-between mt-3">
+                <a href="{% url 'recipes:recipe_detail' pk=recipe.pk %}" class="btn flex-grow-1 me-2 btn-custom">
+                  Back to {{recipe.name}}
+                </a>
+              </div>
+            </form>
+
+            <!-- Delete Recipe Button (with confirmation) -->
+            <!-- Delete button sends a POST request with name="delete". views.py checks if "delete" was submitted and delete the recipe. -->
+            <div class="d-flex justify-content-between mt-3">
+              <form action="{% url 'recipes:delete_recipe' pk=recipe.pk %}" method="POST"
+                onsubmit="return confirmDelete()">
+                {% csrf_token %}
+                <button type="submit" class="btn flex-grow-1 me-2 btn-danger delete-btn">Delete Recipe</button>
+                <!-- <button type="submit" name="delete" value="true"
+                    class="btn flex-grow-1 me-2 btn-danger delete-btn">Delete Recipe</button> -->
+              </form>
+            </div>
+
+            <!-- JavaScript for Delete Confirmation Popup -->
+            <script>
+              function confirmDelete() {
+                return confirm("Are you sure you want to delete '{{ recipe.name }}'? This action cannot be undone.");
+              }
+            </script>
+            {# This 'endif' closes the conditional block that determines what gets displayed (message or form). #}
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+
+</html>
