@@ -121,15 +121,13 @@
                 onsubmit="return confirmDelete()">
                 {% csrf_token %}
                 <button type="submit" class="btn flex-grow-1 me-2 btn-danger delete-btn">Delete Recipe</button>
-                <!-- <button type="submit" name="delete" value="true"
-                    class="btn flex-grow-1 me-2 btn-danger delete-btn">Delete Recipe</button> -->
               </form>
             </div>
 
             <!-- JavaScript for Delete Confirmation Popup -->
             <script>
               function confirmDelete() {
-                return confirm("Are you sure you want to delete '{{ recipe.name }}'? This action cannot be undone.");
+                return confirm("⚠️ WARNING ⚠️\n\nAre you sure you want to delete {{ recipe.name|escapejs }}? This action cannot be undone.\n\nClick \"OK\" or \"Cancel\" two times.");
               }
             </script>
             {# This 'endif' closes the conditional block that determines what gets displayed (message or form). #}

@@ -57,7 +57,10 @@ ROOT_URLCONF = 'recipe_project.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates'],
+        'DIRS': [
+          BASE_DIR / 'recipes' / 'templates',     # Reciples templates
+          BASE_DIR / 'templates',                 # Global templates (like auth/login.html)
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -88,18 +91,8 @@ DATABASES = {
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
-    # {
-    #     'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-    # },
-    {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-    },
-    # {
-    #     'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-    # },
-    {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
-    },
+    {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
 ]
 
 #AUTH
@@ -122,16 +115,18 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
-MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'
-
 # STATICFILES_DIRS tells Django where to look for static files (CSS, JavaScript, images, etc.) during development.
 # By default, Django only looks for static files inside each app's static/ folder.
 # Your CSS file is inside src/static/css/ (not inside an app).
 # Django does not automatically search there unless you explicitly tell it to using STATICFILES_DIRS.
 STATICFILES_DIRS = [
-  os.path.join(BASE_DIR, 'static'),
+  # os.path.join(BASE_DIR, 'static'),
+  BASE_DIR / 'recipes' / 'static'
 ]
+
+# Media settings (for images)
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
