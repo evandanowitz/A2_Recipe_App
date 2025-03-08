@@ -51,6 +51,20 @@
       <a href="{% url 'recipes:edit_recipe' pk=recipe.pk %}" class="btn btn-secondary w-50">Edit Recipe</a>
     </div>
   </div>
+
+  <script>
+    window.addEventListener("pageshow", function (event) {
+      if (event.persisted || (window.performance && window.performance.navigation.type === 2)) {
+        window.location.replace("{% url 'recipes:recipe_list' %}");
+      }
+    });
+
+    history.pushState(null, "", location.href);
+    window.addEventListener("popstate", function () {
+      window.location.replace("{% url 'recipes:recipe_list' %}");
+    });
+  </script>
+
 </body>
 
 </html>
