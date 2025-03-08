@@ -1,14 +1,49 @@
 body {
   margin: 0;
   font-family: Arial, sans-serif;
-  background: #fdfee9;
+  background-image: url("../images/countertop-img.jpg");
+  background-size: cover;
+  background-position: center right;
+  background-repeat: no-repeat;
+  
+  background-attachment: fixed;
+  min-height: 100vh;
+}
 
+.background-img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: -1;
+  opacity: 0.9;
+}
+
+.container {
+  flex-grow: 1;
 }
 
 /* Page Title */
 h1 {
+  font-family: Coolvetica;
   text-align: center;
-  font-size: 64px;
+  /* font-size: 64px; */
+  font-size: 100px;
+  color: #fff;
+}
+
+.display-name {
+  background-color: #fff;
+  padding: 10px 10px 0px 10px;
+  border-radius: 8px;
+  font-size: 18px;
+  color: #000;
+  text-align: center;
+  margin: 15px auto;
+  width: fit-content;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
 }
 
 /* Table Styling */
@@ -44,13 +79,8 @@ tr {
 }
 
 /* General Anchor Tag / Link Styling */
-a {
-  color: #007bff;
-  text-decoration: none;
-}
-
+a,
 a:hover {
-  color: #0056b3;
   text-decoration: none;
 }
 
@@ -75,14 +105,12 @@ a:hover {
 }
 
 #searchForm .card:hover {
-  /* pointer-events: none; */
   box-shadow: none;
   background-color: white;
   transform: none;
 }
 #searchForm .card button:hover {
   transform: translateY(-5px);
-  /* transition: all 0.3s ease; */
   opacity: 0.9;
 }
 
@@ -98,20 +126,6 @@ a:hover {
   margin: 0 auto;
   padding: 5px 25px;
   text-align: center;
-}
-
-/* Details Button Styling */
-.btn-primary {
-  background-color: #007bff;
-  /* background-color: #f39c12; */
-  border-radius: 5px;
-  font-weight: bold;
-}
-
-.btn-primary:hover {
-  /* background-color: #0056b3; */
-  background-color: #e67e22;
-  text-decoration: none;
 }
 
 /* Header Container (Aligning the Logout Button) */
@@ -133,17 +147,19 @@ a:hover {
   color: white;
   background-color: #f39c12;
   border: none;
-  border-radius: 50px;
+  border-radius: 5px;
   transition: all 0.3s ease;
 }
 .logout-btn:hover,
 .search-form-btn:hover {
+  color: white;
   background-color: #e67e22;
   text-decoration: none;
   transform: translateY(-5px);
 }
 .logout-btn:active,
 .search-form-btn:active {
+  color: white;
   background-color: #d35400;
   transform: translateY(0);
 }
@@ -153,20 +169,17 @@ a:hover {
   font-size: 18px;
   font-weight: bold;
   color: white;
-  background-color: #f39c12;
   border: none;
-  border-radius: 50px;
+  border-radius: 5px;
   transition: all 0.3s ease;
 }
 .search-btn:hover,
 .reset-btn:hover {
-  background-color: #e67e22;
   text-decoration: none;
   transform: translateY(-5px);
 }
 .search-btn:active,
 .reset-btn:active {
-  background-color: #d35400;
   transform: translateY(0);
 }
 
@@ -174,17 +187,14 @@ a:hover {
   font-size: 18px;
   font-weight: bold;
   color: white;
-  background-color: #f39c12;
   border: none;
-  border-radius: 50px;
+  border-radius: 25px;
   transition: all 0.3s ease;
 }
 .details-btn:hover {
-  background-color: #e67e22;
   text-decoration: none;
   transform: translateY(-5px); 
 }
 .details-btn:active {
-  background-color: #d35400;
   transform: translateY(0); 
 }
