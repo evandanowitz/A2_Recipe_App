@@ -11,7 +11,14 @@
 </head>
 
 <body class="d-flex align-items-center justify-content-center vh-100">
-  <!-- <img src="{% static 'recipes/images/background-img.jpg' %}" class="background-img" alt="Background Image"> -->
+
+  {% if messages %}
+  <div id="error-message" class="alert alert-danger text-center">
+    {% for message in messages %}
+    {{ message }}
+    {% endfor %}
+  </div>
+  {% endif %}
 
   <!-- Card for Recipe Details -->
   <div class="card shadow-lg card-container">
