@@ -1,9 +1,11 @@
 from django.db import models
 from django.shortcuts import reverse
+from django.contrib.auth.models import User
 
 # Create your models here.
 
 class Recipe(models.Model):
+  user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True) # Link each recipe to a user and allow public recipes
   name = models.CharField(max_length=120)
   cooking_time = models.IntegerField(help_text='in minutes')
   ingredients = models.TextField(
