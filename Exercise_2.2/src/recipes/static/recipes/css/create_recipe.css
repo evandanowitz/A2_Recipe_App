@@ -51,7 +51,6 @@ form p {
   font-size: 18px;
   font-weight: bold;
   color: white;
-  background-color: #f39c12;
   border-radius: 5px;
   transition: all 0.3s ease;
   border: none;
@@ -59,12 +58,10 @@ form p {
 
 .btn-custom:hover {
   color: white;
-  background-color: #e67e22;
   transform: translateY(-3px);
 }
 
 .btn-custom:active {
-  background-color: #d35400;
   box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.3);
   transform: translateY(0);
 }
