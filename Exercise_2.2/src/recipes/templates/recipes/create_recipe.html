@@ -3,7 +3,6 @@
 <html lang="en">
 
 <head>
-  <title>BiteBase - Create Recipe</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
   <link rel="stylesheet" href="{% static 'recipes/css/create_recipe.css' %}">
   <link rel="icon" type="image/x-icon" href="{% static 'recipes/images/favicon.ico' %}">
@@ -15,7 +14,7 @@
   <!-- Card for Create Recipe Form -->
   <div class="container">
     <div class="row justify-content-center">
-      <div class="col-md-5">
+      <div class="col-12 col-sm-8 col-md-8 col-lg-6 col-xl-5">
         <div class="card shadow p-4 rounded-4">
           <div class="card-body">
             <h4 class="text-center mb-3">Create a Recipe</h4>
@@ -86,10 +85,9 @@
 
               <!-- Buttons -->
               <div class="d-flex justify-content-between mt-3">
-                <!-- <button type="submit" class="btn btn-primary w-50 me-2">Create Recipe</button> -->
-                <button type="submit" class="btn flex-grow-1 me-2 btn-custom">Create Recipe</button>
-                <!-- <a href="{% url 'recipes:recipe_list' %}" class="btn btn-secondary w-50">Back to Recipes</a> -->
-                <a href="{% url 'recipes:recipe_list' %}" class="btn flex-grow-1 btn-custom">Back to Recipes</a>
+                <button type="submit" class="btn btn-secondary flex-grow-1 me-2 btn-custom">Create Recipe</button>
+                <a href="{% url 'recipes:recipe_list' %}" class="btn btn-secondary flex-grow-1 btn-custom">Back to
+                  Recipes</a>
               </div>
 
             </form>
