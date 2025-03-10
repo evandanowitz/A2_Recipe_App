@@ -111,6 +111,7 @@ def recipe_list(request):
     'display_name': display_name
   })
 
+@login_required
 def create_recipe_view(request):
   error_message = None # Initialize error_message variable
   success_message = None # Initialize success_message variable
@@ -135,20 +136,11 @@ def create_recipe_view(request):
     'success_message': success_message,
   }
   return render(request, 'recipes/create_recipe.html', context)
-
-def edit_recipe_view(request, pk): # Accepts the primary key (pk) of the recipe to edit
-  error_message = None
-  success_message = None
-  recipe = get_object_or_404(Recipe, pk=pk) # Retrieve the recipe object from the database or return a 404 error if not found
-
-  if request.method == 'POST': # If the form is submitted (In Django forms, updating existing data is done with POST requests, not PUT). PUT mainly used for APIs
-    form = CreateRecipeForm(request.POST, request.FILES, instance=recipe) # Populate form with the submitted data
-    if form.is_valid(): # Validate the form
-      form.save() # Save the changes to the database
+@login_required
       success_message = f"'{recipe.name}' has been successfully updated!"
       return render(request, 'recipes/edit_recipe.html', {'success_message': success_message, 'recipe': recipe}) # Load the edit recipe form template (Once recipe is updated, user is sent back to view the recipe)
     else:
-      error_message = form.errors.as_ul() # Display form errors
+      error_message = form.errors.as_ul()
   else:
     form = CreateRecipeForm(instance=recipe) # Populate the form with the existing recipe data
 
@@ -159,9 +151,10 @@ def edit_recipe_view(request, pk): # Accepts the primary key (pk) of the recipe 
     'success_message': success_message, # Pass success_message object
   })
 
+@login_required
 def delete_recipe_view(request, pk):
   recipe = get_object_or_404(Recipe, pk=pk) # Retrieve the recipe object from the database or return a 404 error if not found
-
+  
   if request.method == 'POST':
     recipe_name = recipe.name # Store name before deleting
     recipe.delete() # Delete the recipe from the database
