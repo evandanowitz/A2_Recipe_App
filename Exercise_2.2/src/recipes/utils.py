@@ -81,7 +81,7 @@ def get_chart(chart_type, data):
     plt.grid(axis='y', linestyle='--', alpha=0.7)             # Add grid for better readability
 
   else:
-    print("Unknown Chart Type")
+    print('Unknown Chart Type')
     return None # Return None for an invalid chart type
 
   plt.tight_layout() # Prevents chart overlap

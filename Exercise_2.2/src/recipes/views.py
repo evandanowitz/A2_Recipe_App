@@ -28,7 +28,7 @@ class RecipeDetailView(LoginRequiredMixin, DetailView):       # class-based "pro
     try:
       return super().get_object(queryset)
     except Recipe.DoesNotExist:
-      messages.error(self.request, "The recipe no longer exists. Redirecting...")
+      messages.error(self.request, 'The recipe no longer exists. Redirecting...')
       return None
     
   def get(self, request, *args, **kwargs):
@@ -88,7 +88,7 @@ def recipe_list(request):
     if difficulty:
       qs_recipes = qs_recipes.filter(difficulty=difficulty) # Exact match
 
-  no_results_message = "No recipes match your search criteria." if not qs_recipes.exists() else None
+  no_results_message = 'No recipes match your search criteria.' if not qs_recipes.exists() else None
 
   if qs_recipes.exists(): # Convert the QuerySet to a Pandas DataFrame (if there are matching recipes/results)
     recipes_df = pd.DataFrame(qs_recipes.values()) # Convert QuerySet to DataFrame
@@ -127,7 +127,7 @@ def create_recipe_view(request):
       else:
         recipe.user = request.user # Private recipe for the specific user
       recipe.save()
-      success_message = f"'{recipe.name}' created successfully!"
+      success_message = f'"{recipe.name}" created successfully!'
       form = CreateRecipeForm() # Reset the form
     else:
       error_message = form.errors.as_ul() # Display form errors
@@ -148,14 +148,14 @@ def edit_recipe_view(request, pk):
   recipe = Recipe.objects.filter(pk=pk).first()
 
   if recipe is None:
-    messages.error(request, "The recipe no longer exists. Redirecting to recipes list.")
+    messages.error(request, 'The recipe no longer exists. Redirecting to recipes list.')
     return HttpResponseRedirect(reverse('recipes:recipe_list'))
 
   if request.method == 'POST':
     form = CreateRecipeForm(request.POST, request.FILES, instance=recipe)
     if form.is_valid():
       form.save()
-      success_message = f"'{recipe.name}' has been successfully updated!"
+      success_message = f'"{recipe.name}" has been successfully updated!'
       return render(request, 'recipes/edit_recipe.html', {'success_message': success_message, 'recipe': recipe}) # Load the edit recipe form template (Once recipe is updated, user is sent back to view the recipe)
     else:
       error_message = form.errors.as_ul()
@@ -175,7 +175,7 @@ def delete_recipe_view(request, pk):
     recipe_name = recipe.name # Store name before deleting
     recipe.delete() # Delete the recipe from the database
 
-    request.session['deleted_recipe_message'] = f"Recipe '{recipe_name}' was successfully deleted."
+    request.session['deleted_recipe_message'] = f'Recipe "{recipe_name}" was successfully deleted.'
 
     if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
       return JsonResponse({'redicrect_url': reverse('recipes:recipe_list')})
@@ -230,9 +230,9 @@ def signup_view(request):
     if form.is_valid(): # If the form is valid
       user = form.save() # Save the user to the database
       login(request, user) # Automatically log in the user
-      success_message = "User has been successfully created!"
+      success_message = 'User has been successfully created!'
 
-      superuser = User.objects.get(username="evandanowitz")
+      superuser = User.objects.get(username='evandanowitz')
       public_recipes = Recipe.objects.filter(user=superuser)
       for recipe in public_recipes:
         Recipe.objects.create(
@@ -269,11 +269,11 @@ def profile_view(request):
   
   name = request.user.get_full_name()
   if not name.strip():
-    name = "Name not created at signup"
+    name = 'Name not created at signup'
 
   email = request.user.email
   if not email:
-    email = "Email not created at signup"
+    email = 'Email not created at signup'
 
   context = {
     'username': request.user.username,
@@ -286,9 +286,9 @@ def profile_view(request):
 
 @login_required
 def delete_account_view(request):
-  if request.method == "POST":
+  if request.method == 'POST':
     user = request.user
-    messages.success(request, "Your account has been deleted successfully.")
+    messages.success(request, 'Your account has been deleted successfully.')
     user.delete()
     logout(request)
     return redirect('recipes:home')

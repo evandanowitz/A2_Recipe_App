@@ -58,7 +58,7 @@ class RecipeModelTest(TestCase):
   # check if the difficult level is correctly calculated based on cooking time and ingredients
   def test_calculate_difficulty(self):
     self.recipe.calculate_difficulty() # call the function
-    self.assertEqual(self.recipe.difficulty, "Medium") # expected difficulty level
+    self.assertEqual(self.recipe.difficulty, 'Medium') # expected difficulty level
 
 # ===================================
 # View Tests: Testing Pages and Links
@@ -180,10 +180,10 @@ class RecipeSearchTest(TestCase):
     cls.soup = Recipe(name = 'Tomato Soup', cooking_time = 15, ingredients = 'tomato, salt, basil', difficulty = 'Easy', description = 'A warm tomato soup')
     
     # Manually set difficulty levels before saving
-    cls.cake.difficulty = "Hard"
-    cls.ice_cream.difficulty = "Easy"
-    cls.chicken.difficulty = "Medium"
-    cls.soup.difficulty = "Easy"
+    cls.cake.difficulty = 'Hard'
+    cls.ice_cream.difficulty = 'Easy'
+    cls.chicken.difficulty = 'Medium'
+    cls.soup.difficulty = 'Easy'
 
     # Bypass save() method and manually insert into DB without overriding difficulty
     Recipe.objects.bulk_create([cls.cake, cls.ice_cream, cls.chicken, cls.soup])
