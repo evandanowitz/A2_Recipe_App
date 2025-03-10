@@ -165,8 +165,6 @@ def edit_recipe_view(request, pk):
   return render(request, 'recipes/edit_recipe.html', {
     'form': form, # Pass form object
     'recipe': recipe, # Pass recipe object
-    'error_message': error_message, # Pass error_message object
-    'success_message': success_message, # Pass success_message object
   })
 
 @login_required
@@ -221,8 +219,6 @@ def logout_success(request):
   logout_time = localtime(now()).strftime('%m/%d/%Y @ %I:%M %p')
   return render(request, 'recipes/auth/logout_success.html', {'logout_time': logout_time}) # finds HTML file and renders it
 
-# This function handles GET and POST requests, redirects user to login page after signup, and shows form errors if there are issues.
-# Valid form: User is saved, logged in, redirected to login.html      # Invalid form: Error message appears, re-renders signup page
 def signup_view(request):
   error_message = None # Initialize error_message variable
   success_message = None # Initialize success_message variable
@@ -288,3 +284,11 @@ def profile_view(request):
 
   return render(request, 'recipes/profile.html', context)
 
+@login_required
+def delete_account_view(request):
+  if request.method == "POST":
+    user = request.user
+    messages.success(request, "Your account has been deleted successfully.")
+    user.delete()
+    logout(request)
+    return redirect('recipes:home')
