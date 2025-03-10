@@ -177,8 +177,7 @@ def delete_recipe_view(request, pk):
     recipe_name = recipe.name # Store name before deleting
     recipe.delete() # Delete the recipe from the database
 
-    # Use Django messages framework to pass success message
-    messages.success(request, f"Recipe '{recipe_name}' was successfully deleted.")
+    request.session['deleted_recipe_message'] = f"Recipe '{recipe_name}' was successfully deleted."
 
     # Redirect to all recipes list
     return redirect('recipes:recipe_list')
