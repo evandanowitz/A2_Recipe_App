@@ -17,6 +17,7 @@ urlpatterns = [
   path('recipes/<int:pk>/delete/', delete_recipe_view, name='delete_recipe'), # Requires an existing recipe ID ( <pk> ). The delete button in edit_recipe.html now links to this view
   path('about-me/', about_me_view, name='about_me'),
   path('profile/', profile_view, name='profile'),
+  path('delete-account/', delete_account_view, name='delete_account'),
 
   # Authentication Routes
   path('login/', login_view, name='login'), # good practice to give names to your url and view mapping
