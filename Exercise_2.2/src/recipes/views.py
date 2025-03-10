@@ -49,10 +49,10 @@ def recipe_list(request):
   chart_error_msg = None # Initialize an error message variable
 
   # Get search input from the form
-  recipe_name = request.GET.get('recipe_name', '').strip() # Get recipe name input from the search form
-  ingredient = request.GET.get('ingredient', '').strip() # Get ingredient input from the search form
-  difficulty = request.GET.get('difficulty', '') # Get difficulty level selection from the search form
-  chart_type = request.GET.get('chart_type', '') # Get chart type selection from the search form
+  recipe_name = request.GET.get('recipe_name', '').strip()
+  ingredient = request.GET.get('ingredient', '').strip()
+  difficulty = request.GET.get('difficulty', '')
+  chart_type = request.GET.get('chart_type', '')
 
   # Apply filters based on user input (only if any filter is present)
   if recipe_name or ingredient or difficulty:
