@@ -264,3 +264,27 @@ def signup_view(request):
 def about_me_view(request):
   return render(request, 'recipes/about_me.html')
 
+@login_required
+def profile_view(request):
+  display_name = request.user.get_full_name()
+
+  if not display_name.strip():
+    display_name = request.user.username
+  
+  name = request.user.get_full_name()
+  if not name.strip():
+    name = "Name not created at signup"
+
+  email = request.user.email
+  if not email:
+    email = "Email not created at signup"
+
+  context = {
+    'username': request.user.username,
+    'display_name': display_name,
+    'name': name,
+    'email': email
+  }
+
+  return render(request, 'recipes/profile.html', context)
+
