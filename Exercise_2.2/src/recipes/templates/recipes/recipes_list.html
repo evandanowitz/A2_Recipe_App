@@ -165,29 +165,22 @@
       let searchForm = document.getElementById("searchForm");
 
       // Check localStorage for the search form's current state (open or closed)
-      if (localStorage.getItem("searchFormOpen") === "true") {
-        searchForm.classList.add("show");
-      }
+        localStorage.setItem("searchFormOpen", "false");
+        searchForm.classList.remove("show");
+        toggleButton.textContent = "Search";
 
-      // Listen for Bootstrap's collapse events to update button text
       searchForm.addEventListener("show.bs.collapse", function () {
-        toggleButton.textContent = "Hide Search Form";
-        localStorage.setItem("searchFormOpen", "true");
+          toggleButton.textContent = "Hide Search";
       });
 
       searchForm.addEventListener("hide.bs.collapse", function () {
-        toggleButton.textContent = "Search Form";
-        localStorage.setItem("searchFormOpen", "false");
+          toggleButton.textContent = "Search";
       });
 
       // Check if there are search parameters in the URL
       if (window.location.search) {
         // Remove all search parameters from the URL without reloading the page
-        window.history.replaceState(
-          {},
-          document.title,
-          window.location.pathname
-        );
+          window.history.replaceState({}, document.title, window.location.pathname);
       }
     });
   </script>
