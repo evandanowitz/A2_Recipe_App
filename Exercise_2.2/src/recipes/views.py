@@ -179,8 +179,10 @@ def delete_recipe_view(request, pk):
 
     request.session['deleted_recipe_message'] = f"Recipe '{recipe_name}' was successfully deleted."
 
-    # Redirect to all recipes list
-    return redirect('recipes:recipe_list')
+    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+      return JsonResponse({'redicrect_url': reverse('recipes:recipe_list')})
+    
+    return redirect('recipes:recipe_list') # Redirect to all recipes list
   
   return redirect('recipes:recipe_list') # Redirect back if method is not POST
 
