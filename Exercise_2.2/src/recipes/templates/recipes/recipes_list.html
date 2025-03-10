@@ -32,7 +32,7 @@
     <!-- Page Title -->
     <div class="row justify-content-center">
       <div class="col text-center">
-      <h1 class="me-auto">Recipes</h1>
+        <h1 class="me-auto">Recipes</h1>
       </div>
     </div>
 
@@ -42,8 +42,8 @@
         <button id="toggleButton" class="btn btn-lg btn-warning shadow search-form-btn" type="button"
           data-bs-toggle="collapse" data-bs-target="#searchForm">Search</button>
         <a href="{% url 'recipes:create_recipe' %}" class="btn btn-lg btn-warning shadow logout-btn">Create Recipe</a>
-
-        <!-- Logout Button (Navigation) -->
+        <a href="{% url 'recipes:profile' %}" class="btn btn-lg btn-warning shadow logout-btn">Profile</a>
+        <a href="{% url 'recipes:about_me' %}" class="btn btn-lg btn-warning shadow logout-btn">About</a>
         <a href="{% url 'recipes:logout' %}" class="btn btn-lg btn-warning shadow logout-btn">Logout</a>
       </div>
     </div>
@@ -64,10 +64,8 @@
           <div class="card-body">
             <h4 class="card-title text-center">Search for Recipes</h4>
             <hr>
-
             <form action="" method="GET">
               {% csrf_token %} {% comment %} Security token for form submission {% endcomment %}
-
               <!-- First Row: Recipe Name & Ingredient -->
               <div class="row mb-3">
                 <div class="col-6 col-md-6">{{ form.recipe_name }}</div>
@@ -85,14 +83,11 @@
                   <a href="{% url 'recipes:recipe_list' %}" class="btn btn-secondary w-50 reset-btn">Reset</a>
                 </div>
               </div>
-
             </form>
-
           </div>
         </div>
       </div>
     </div>
-
     <br>
 
     <!-- Alerts (No results or a Chart error) -->
@@ -109,8 +104,8 @@
     {% if chart_error_msg %}
     <div class="row justify-content-center">
       <div class="col-lg-8">
-    <div class="alert alert-danger text-center" role="alert">
-      {{ chart_error_msg }}
+        <div class="alert alert-danger text-center" role="alert">
+          {{ chart_error_msg }}
         </div>
       </div>
     </div>
@@ -138,52 +133,51 @@
     <!-- Recipe Cards -->
     <div class="row justify-content-center mt-3">
       <div class="col-lg-10">
-    <div class="row">
-      {% for object in object_list %}
-      <div class="col-sm-6 col-md-4 col-lg-3 mb-4">
-        <div class="card h-100 shadow">
-          <img src="{{ object.pic.url }}" class="card-img-top" alt="{{ object.name }}">
-          <div class="card-body d-flex flex-column">
-            <h5 class="card-title">{{ object.name }}</h5>
-            <a href="{% url 'recipes:recipe_detail' object.id %}"
+        <div class="row">
+          {% for object in object_list %}
+          <div class="col-sm-6 col-md-4 col-lg-3 mb-4">
+            <div class="card h-100 shadow">
+              <img src="{{ object.pic.url }}" class="card-img-top" alt="{{ object.name }}">
+              <div class="card-body d-flex flex-column">
+                <h5 class="card-title">{{ object.name }}</h5>
+                <a href="{% url 'recipes:recipe_detail' object.id %}"
                   class="btn btn-secondary mt-auto details-btn">Details</a>
+              </div>
+            </div>
           </div>
+          {% endfor %}
         </div>
       </div>
-      {% endfor %}
-        </div>
     </div>
-  </div>
 
-  <!-- Bootstrap JavaScript for the "Collapse" feature to work -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Bootstrap JavaScript for the "Collapse" feature to work -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-  <!-- JavaScript function to update button text based on whether search form is displayed or not -->
-  <script>
-    document.addEventListener("DOMContentLoaded", function () {
-      let toggleButton = document.getElementById("toggleButton");
-      let searchForm = document.getElementById("searchForm");
+    <!-- JavaScript function to update button text based on whether search form is displayed or not -->
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        let toggleButton = document.getElementById("toggleButton");
+        let searchForm = document.getElementById("searchForm");
 
-      // Check localStorage for the search form's current state (open or closed)
+        // Check localStorage for the search form's current state (open or closed)
         localStorage.setItem("searchFormOpen", "false");
         searchForm.classList.remove("show");
         toggleButton.textContent = "Search";
 
-      searchForm.addEventListener("show.bs.collapse", function () {
+        searchForm.addEventListener("show.bs.collapse", function () {
           toggleButton.textContent = "Hide Search";
-      });
+        });
 
-      searchForm.addEventListener("hide.bs.collapse", function () {
+        searchForm.addEventListener("hide.bs.collapse", function () {
           toggleButton.textContent = "Search";
-      });
+        });
 
-      // Check if there are search parameters in the URL
-      if (window.location.search) {
-        // Remove all search parameters from the URL without reloading the page
+        if (window.location.search) {
+          // Remove all search parameters from the URL without reloading the page
           window.history.replaceState({}, document.title, window.location.pathname);
-      }
-    });
-  </script>
+        }
+      });
+    </script>
 
     <script>
       window.addEventListener("pageshow", function (event) {
