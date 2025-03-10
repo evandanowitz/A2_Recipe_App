@@ -260,3 +260,7 @@ def signup_view(request):
     'success_message': success_message, # Pass success message to template
   }
   return render(request, 'recipes/auth/signup.html', context) # Render the signup page with the provided context
+
+def about_me_view(request):
+  return render(request, 'recipes/about_me.html')
+
