@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+{% load static %} <!-- Ensures Django knows how to handle static files -->
+<html lang="en">
+
+<head>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="{% static 'recipes/css/about_me.css' %}">
+  <link rel="icon" type="image/x-icon" href="{% static 'recipes/images/favicon.ico' %}">
+  <title>BiteBase - About</title>
+</head>
+
+<body class="bg-light">
+
+  <!-- Buttons -->
+  <div class="container mt-4 text-center">
+    <div class="d-flex justify-content-center gap-4">
+      <a href="{% url 'recipes:recipe_list' %}" class="btn btn-lg btn-warning shadow logout-btn">All Recipes</a>
+      <a href="{% url 'recipes:create_recipe' %}" class="btn btn-lg btn-warning shadow logout-btn">Create Recipe</a>
+      <a href="{% url 'recipes:profile' %}" class="btn btn-lg btn-warning shadow logout-btn">Profile</a>
+      <a href="{% url 'recipes:logout' %}" class="btn btn-lg btn-warning shadow logout-btn">Logout</a>
+    </div>
+  </div>
+  <hr>
+  <!-- About BiteBase -->
+  <div class="container mt-4">
+    <div class="row justify-content-center">
+      <div class="col-md-12 col-lg-12">
+        <h1 class="mb-4">BiteBase</h1>
+        <!-- <h3 class="text-center">Objective</h3> -->
+        <p class="text-center">A dynamic, user-friendly <b>recipe management web application</b>built using the Django
+          web framework.</p>
+        <br>
+        <!-- <h3 class="text-center">Purpose</h3> -->
+        <p class="text-center">The development of BiteBase created <b>a fully functional web app</b> using Python-based
+          Django to
+          best demonstrate my understanding of the fundamentals of the Django web framework and my web application
+          development skills using the framework professionally. The app is designed to create, read, modify, search for
+          and delete recipes. It includes an admin panel for data handling and visualization, and implements best
+          practices in<b>web development, user authentication, and data management</b>.
+        </p>
+        <br>
+        <h3 class="text-center">Key Features</h3>
+        <ul class="list-unstyled text-center">
+          <li><b>User Authentication</b>: Sign up, log in, and manage personal recipes.</li>
+          <li><b>Recipe Management</b>: Create, edit, and delete recipes with structured details.</li>
+          <li><b>Search</b>: Find and filter recipes with user search criteria.</li>
+          <li><b>Difficulty Rating System</b>: Recipes are automatically categorized by difficulty.</li>
+          <li><b>Data Visualization</b>: View trends and statistics through dynamic chart generation.</li>
+          <li><b>Admin Panel</b>: Securely manage recipes and users via Django's built-in admin.</li>
+          <li><b>Deployed with Heroku</b>: The application is live and accessible from anywhere.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <br>
+  <hr>
+  <!-- About the Developer -->
+  <div class="container mt-5">
+    <div class="row justify-content-center">
+      <div class="col-md-12 col-lg-12">
+        <h1 class="mb-4">About the Developer</h1>
+        <p class="text-center">👋 Hi, I'm <b>Evan Danowitz</b>, the sole developer of BiteBase.</p>
+        <p class="text-center">I’m a motivated <b>full-stack web developer</b> specializing in <b>modern web
+            technologies, clean design, and performance-driven applications</b>. I thrive on creating <b>user-friendly
+            and dynamic web experiences</b>.
+        </p>
+        <p class="text-center">My background includes <b>client relations, project management, and customer service</b>,
+          which allows me to approach development with a <b>problem-solving mindset</b> and a strong <b>focus on user
+            experience</b>.
+        </p>
+      </div>
+    </div>
+  </div>
+  <br>
+  <hr>
+  <!-- Contact and Links -->
+  <div class="container my-5 text-center">
+    <h1 class="mb-3">Let's Connect!</h1>
+
+    <h2 class="lead fw-bold mb-3">Evan Danowitz</h2>
+    <p class="lead mb-3">📞 (856) 506-6722 | ✉️ <span id="email">evandanowitz21@gmail.com</span></p>
+    <button onclick="copyEmail()" class="copy-btn">Copy Email Address</button>
+
+    <div class="d-flex flex-wrap justify-content-center gap-4 mt-3">
+
+      <a href="https://evandanowitz.github.io/portfolio/" target="_blank">
+        <img src="{% static 'recipes/images/social/Headshot.jpg' %}" class="social-icon" alt="Portfolio Site">
+      </a>
+
+      <a href="mailto:evandanowitz21@gmail.com" target="_blank">
+        <img src="{% static 'recipes/images/social/email.png' %}" class="social-icon" alt="E-Mail Icon">
+      </a>
+
+      <a href="https://linkedin.com/in/evandanowitz" target="_blank">
+        <img src="{% static 'recipes/images/social/linkedin.png' %}" class="social-icon" alt="LinkedIn Icon">
+      </a>
+
+      <a href="https://github.com/evandanowitz" target="_blank">
+        <img src="{% static 'recipes/images/social/github.svg' %}" class="social-icon" alt="GitHub Icon">
+      </a>
+
+      <a href="https://x.com/EvanDanoWebDev" target="_blank">
+        <img src="{% static 'recipes/images/social/x.png' %}" class="social-icon" alt="X (Twitter) Icon">
+      </a>
+
+      <a href="https://medium.com/@evandanowitz21" target="_blank">
+        <img src="{% static 'recipes/images/social/medium.png' %}" class="social-icon" alt="Medium Icon">
+      </a>
+
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+  <script>
+    function copyEmail() {
+      navigator.clipboard.writeText("evandanowitz21@gmail.com");
+      alert("Email copied to clipboard!");
+    }
+  </script>
+</body>
+
+</html>
