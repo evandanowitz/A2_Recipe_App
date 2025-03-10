@@ -24,7 +24,19 @@ class RecipeDetailView(LoginRequiredMixin, DetailView):       # class-based "pro
   model = Recipe                                              # specify model
   template_name = 'recipes/recipe_details.html'               # specify template
 
-# Takes request from the application and returns template available at recipes/home.html as response
+  def get_object(self, queryset=None):
+    try:
+      return super().get_object(queryset)
+    except Recipe.DoesNotExist:
+      messages.error(self.request, "The recipe no longer exists. Redirecting...")
+      return None
+    
+  def get(self, request, *args, **kwargs):
+    obj = self.get_object()
+    if obj is None:
+      return HttpResponseRedirect(reverse('recipes:recipe_list')) # Redirect to list page
+    return super().get(request, *args, **kwargs)
+
 def home(request):
   return render(request, 'recipes/recipes_home.html')
 
