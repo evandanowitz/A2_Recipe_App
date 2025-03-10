@@ -40,7 +40,7 @@ class RecipeDetailView(LoginRequiredMixin, DetailView):       # class-based "pro
 def home(request):
   return render(request, 'recipes/recipes_home.html')
 
-@login_required # protected
+@login_required
 def recipe_list(request):
   form = RecipeSearchForm(request.GET or None) # Create an instance of RecipeSearchForm that was defined in recipes/forms.py. Allow GET requests for filtering
   qs_recipes = Recipe.objects.all() # Retrieve all recipes from the database (a QuerySet)
