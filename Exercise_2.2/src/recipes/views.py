@@ -235,6 +235,20 @@ def signup_view(request):
       user = form.save() # Save the user to the database
       login(request, user) # Automatically log in the user
       success_message = "User has been successfully created!"
+
+      superuser = User.objects.get(username="evandanowitz")
+      public_recipes = Recipe.objects.filter(user=superuser)
+      for recipe in public_recipes:
+        Recipe.objects.create(
+          user=user,
+          name=recipe.name,
+          cooking_time=recipe.cooking_time,
+          ingredients=recipe.ingredients,
+          difficulty=recipe.difficulty,
+          description=recipe.description,
+          pic=recipe.pic,
+        )
+
       form = SignupForm() # Reset the form after successful signup
 
     else: # If form is invalid, display actual errors
