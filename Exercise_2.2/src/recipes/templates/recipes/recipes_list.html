@@ -28,18 +28,19 @@
 
 <body>
   <div class="container mt-4">
-    <div class="d-flex justify-content-between align-items-center mb-2">
+
+    <!-- Page Title -->
+    <div class="row justify-content-center">
+      <div class="col text-center">
       <h1 class="me-auto">Recipes</h1>
+      </div>
+    </div>
 
-      <div class="d-flex gap-2">
-        <!-- Search Form Button -->
-        <button id="toggleButton" class="btn btn-primary search-form-btn" type="button" data-bs-toggle="collapse"
-          data-bs-target="#searchForm">
-          Search Form
-        </button>
-        {% comment %} Logout Button (Link is better for navigation) {% endcomment %}
-
-        <!-- Create Recipe Button -->
+    <!-- Buttons -->
+    <div class="row mb-3">
+      <div class="col d-flex justify-content-center gap-2">
+        <button id="toggleButton" class="btn btn-lg btn-warning shadow search-form-btn" type="button"
+          data-bs-toggle="collapse" data-bs-target="#searchForm">Search</button>
         <a href="{% url 'recipes:create_recipe' %}" class="btn btn-lg btn-warning shadow logout-btn">Create Recipe</a>
 
         <!-- Logout Button (Navigation) -->
