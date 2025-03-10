@@ -95,17 +95,24 @@
 
     <br>
 
-    <!-- Display Search Results as a TABLE -->
-    <!-- {% if recipes_df %}
-    <h3>Search Results:</h3>
-    {{recipes_df|safe}}
-    {% else %}
-    <h3>No recipes found.</h3>
-    {% endif %} -->
+    <!-- Alerts (No results or a Chart error) -->
+    {% if no_results_message %}
+    <div class="row justify-content-center">
+      <div class="col-lg-8">
+        <div class="alert alert-warning text-center" role="alert">
+          {{ no_results_message }}
+        </div>
+      </div>
+    </div>
+    {% endif %}
 
     {% if chart_error_msg %}
+    <div class="row justify-content-center">
+      <div class="col-lg-8">
     <div class="alert alert-danger text-center" role="alert">
       {{ chart_error_msg }}
+        </div>
+      </div>
     </div>
     {% endif %}
 
