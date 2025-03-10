@@ -1,21 +1,20 @@
-from django.shortcuts import render, redirect                 # imported render and redirect ( imported by default? )
-from django.shortcuts import get_object_or_404                # import
-from .models import Recipe                                    # to access the Recipe model
-from django.views.generic import ListView, DetailView         # to display lists and details
-from django.contrib.auth.mixins import LoginRequiredMixin     # to protect class-based view
-from django.contrib.auth.decorators import login_required     # to protect function-based view
-from django.contrib.auth import authenticate, login, logout   # Django authentication libraries
-from django.contrib.auth.forms import AuthenticationForm      # Django Form for authentication
-from django.contrib.auth.forms import UserCreationForm        # Django Form for user creation
-from django.contrib import messages                           # import Django messages framework
-from .forms import RecipeSearchForm                           # import RecipeSearchForm class
-from .forms import SignupForm                                 # import SignupForm class
-from .forms import CreateRecipeForm                           # import CreateRecipeForm class
-import pandas as pd                                           # import pandas. refer to it as 'pd'
-from .utils import get_chart                                  # to call the get_chart() function
+from django.shortcuts import render, redirect, get_object_or_404                 # imported render and redirect ( imported by default? )
+from .models import Recipe                                                       # to access the Recipe model
+from django.views.generic import ListView, DetailView                            # to display lists and details
+from django.contrib.auth.mixins import LoginRequiredMixin                        # to protect class-based view
+from django.contrib.auth.decorators import login_required                        # to protect function-based view
+from django.contrib.auth import authenticate, login, logout                      # Django authentication libraries
+from django.contrib.auth.forms import AuthenticationForm                         # Django Form for authentication
+from django.contrib import messages                                              # import Django messages framework
+from django.contrib.auth.models import User
+from .forms import RecipeSearchForm, SignupForm, CreateRecipeForm                # import RecipeSearchForm, SignupForm, and CreateRecipeForm classes
+import pandas as pd                                                              # import pandas. refer to it as 'pd'
+from .utils import get_chart                                                     # to call the get_chart() function
 from django.utils.timezone import now, localtime
-
-# Create your views here.
+from django.http import HttpResponseRedirect, Http404
+from django.urls import reverse
+from django.db.models import Q
+from django.http import JsonResponse
 
 class RecipeListView(LoginRequiredMixin, ListView):           # class-based "protected" view
   model = Recipe                                              # specify model
