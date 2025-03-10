@@ -120,8 +120,13 @@ def create_recipe_view(request):
   if request.method == 'POST':
     form = CreateRecipeForm(request.POST, request.FILES) # Include FILES for image uploads
     if form.is_valid():
-      recipe = form.save() # Save the new recipe to the database
-      # success_message = "Recipe created successfully!"
+      recipe = form.save(commit=False) # Save the new recipe to the database
+      
+      if request.user.is_superuser: # If superuser creates a recipe, set it as public (user=None)
+        recipe.user = None # Public recipes for all users
+      else:
+        recipe.user = request.user # Private recipe for the specific user
+      recipe.save()
       success_message = f"'{recipe.name}' created successfully!"
       form = CreateRecipeForm() # Reset the form
     else:
@@ -135,7 +140,9 @@ def create_recipe_view(request):
     'error_message': error_message,
     'success_message': success_message,
   }
+
   return render(request, 'recipes/create_recipe.html', context)
+
 @login_required
       success_message = f"'{recipe.name}' has been successfully updated!"
       return render(request, 'recipes/edit_recipe.html', {'success_message': success_message, 'recipe': recipe}) # Load the edit recipe form template (Once recipe is updated, user is sent back to view the recipe)
