@@ -2,8 +2,8 @@ from django.conf import settings # Allows access to MEDIA_URL and MEDIA_ROOT var
 from django.conf.urls.static import static # Helper function for serving media files during development
 from django.urls import path
 from .views import (
-  home, recipe_list, RecipeDetailView, create_recipe_view, edit_recipe_view, delete_recipe_view,
-  login_view, logout_view, logout_success, signup_view
+  home, recipe_list, RecipeDetailView, create_recipe_view, edit_recipe_view, delete_recipe_view, 
+  about_me_view, profile_view, delete_account_view, login_view, logout_view, logout_success, signup_view
 )
 
 app_name = 'recipes'
@@ -15,6 +15,8 @@ urlpatterns = [
   path('create-recipe/', create_recipe_view, name='create_recipe'), # DOES NOT require an existing recipe ID ( no <pk> )
   path('recipes/<int:pk>/edit/', edit_recipe_view, name='edit_recipe'), # Requires an existing recipe ID ( <pk> )
   path('recipes/<int:pk>/delete/', delete_recipe_view, name='delete_recipe'), # Requires an existing recipe ID ( <pk> ). The delete button in edit_recipe.html now links to this view
+  path('about-me/', about_me_view, name='about_me'),
+  path('profile/', profile_view, name='profile'),
 
   # Authentication Routes
   path('login/', login_view, name='login'), # good practice to give names to your url and view mapping
