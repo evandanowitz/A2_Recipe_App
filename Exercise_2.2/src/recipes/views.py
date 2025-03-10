@@ -144,6 +144,17 @@ def create_recipe_view(request):
   return render(request, 'recipes/create_recipe.html', context)
 
 @login_required
+def edit_recipe_view(request, pk):
+  recipe = Recipe.objects.filter(pk=pk).first()
+
+  if recipe is None:
+    messages.error(request, "The recipe no longer exists. Redirecting to recipes list.")
+    return HttpResponseRedirect(reverse('recipes:recipe_list'))
+
+  if request.method == 'POST':
+    form = CreateRecipeForm(request.POST, request.FILES, instance=recipe)
+    if form.is_valid():
+      form.save()
       success_message = f"'{recipe.name}' has been successfully updated!"
       return render(request, 'recipes/edit_recipe.html', {'success_message': success_message, 'recipe': recipe}) # Load the edit recipe form template (Once recipe is updated, user is sent back to view the recipe)
     else:
