@@ -43,10 +43,35 @@ def home(request):
 @login_required
 def recipe_list(request):
   form = RecipeSearchForm(request.GET or None) # Create an instance of RecipeSearchForm that was defined in recipes/forms.py. Allow GET requests for filtering
-  qs_recipes = Recipe.objects.all() # Retrieve all recipes from the database (a QuerySet)
-  recipes_df = None # Initialize pandas DataFrame as None
-  chart = None # Initialize chart variable as None
-  chart_error_msg = None # Initialize an error message variable
+  deleted_recipe_message = request.session.pop('deleted_recipe_message', None)
+
+  if request.user.is_superuser:
+    qs_recipes = Recipe.objects.filter(Q(user=request.user) | Q(user__isnull=True))
+  else:
+    qs_recipes = Recipe.objects.filter(user=request.user)
+
+  if not qs_recipes.exists() and not request.user.is_superuser:
+    public_recipes = Recipe.objects.filter(user__isnull=True)
+    
+    for recipe in public_recipes:
+      Recipe.objects.create(
+        user=request.user,
+        name=recipe.name,
+        cooking_time=recipe.cooking_time,
+        ingredients=recipe.ingredients,
+        difficulty=recipe.difficulty,
+        description=recipe.description,
+        pic=recipe.pic,
+      )
+
+    # Get all superuser-created public recipes
+    qs_recipes = Recipe.objects.filter(user=request.user)
+
+  display_name = request.user.get_full_name() if request.user.get_full_name() else request.user.username
+
+  recipes_df = None
+  chart = None
+  chart_error_msg = None
 
   # Get search input from the form
   recipe_name = request.GET.get('recipe_name', '').strip()
