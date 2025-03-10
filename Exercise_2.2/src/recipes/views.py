@@ -105,7 +105,10 @@ def recipe_list(request):
     'form': form,                         # Pass the search form
     'recipes_df': recipes_df,             # Pass the DataFrame for table display
     'chart': chart,                       # Pass the generated chart
-    'chart_error_msg': chart_error_msg    # Pass the chart error message 
+    'chart_error_msg': chart_error_msg,   # Pass the chart error message
+    'deleted_recipe_message': deleted_recipe_message,
+    'no_results_message': no_results_message,
+    'display_name': display_name
   })
 
 def create_recipe_view(request):
