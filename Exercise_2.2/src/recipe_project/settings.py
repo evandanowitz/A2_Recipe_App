@@ -120,7 +120,6 @@ STATIC_URL = 'static/'
 # Your CSS file is inside src/static/css/ (not inside an app).
 # Django does not automatically search there unless you explicitly tell it to using STATICFILES_DIRS.
 STATICFILES_DIRS = [
-  # os.path.join(BASE_DIR, 'static'),
   BASE_DIR / 'recipes' / 'static'
 ]
 

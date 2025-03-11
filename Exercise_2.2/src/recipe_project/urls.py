@@ -20,6 +20,8 @@ from django.contrib import admin
 from django.urls import path, include
 
 urlpatterns = [
-  path('admin/', admin.site.urls), # Ensures the Django Admin Panel is accessible
-  path('', include('recipes.urls')), # Tells Django to delegate all other URLs to 'recipes/urls.py'
+  # Ensures the Django Admin Panel is accessible
+  path('admin/', admin.site.urls),
+  # Tells Django to delegate all other URLs to 'recipes/urls.py'
+  path('', include('recipes.urls')),
 ]

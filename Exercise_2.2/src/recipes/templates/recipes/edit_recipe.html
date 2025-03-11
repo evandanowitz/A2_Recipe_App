@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-{% load static %} <!-- Ensures Django knows how to handle static files -->
+{% load static %}
 <html lang="en">
 
 <head>
@@ -10,16 +10,16 @@
 </head>
 
 <body class="d-flex align-items-center justify-content-center vh-100">
+
   <img src="{% static 'recipes/images/signup-bg-img.jpg' %}" class="background-img" alt="Background Image">
 
-  <!-- Card for Edit Recipe Form -->
   <div class="container">
     <div class="row justify-content-center">
       <div class="col-12 col-sm-8 col-md-8 col-lg-6 col-xl-5">
         <div class="card shadow p-4 rounded-4">
           <div class="card-body">
 
-            <!-- Display success messages and hide form when recipe is successfully edited -->
+            <!-- Display success message when recipe is successfully edited -->
             {% if success_message %}
             <div class="alert alert-success text-center">
               <p>{{ success_message }}</p>
@@ -35,7 +35,7 @@
             </div>
             {% endif %}
 
-            {# Check for/display error messages #}
+            <!-- Display error message if form submission fails -->
             {% if error_message %}
             <div class="alert alert-danger text-center">
               <p>{{ error_message|safe }}</p>
@@ -51,7 +51,6 @@
             {% endif %}
 
             {% if not success_message and not error_message %}
-            <!-- Edit Form Section -->
             <h4 class="text-center mb-3">Edit Recipe</h4>
             <hr>
 
@@ -59,43 +58,46 @@
             <form action="" method="POST" enctype="multipart/form-data">
               {% csrf_token %} <!-- Security token for form submission -->
 
-              <!-- Recipe Name (Required) -->
+              <!-- Recipe Name -->
               <div class="mb-3">
                 <label for="{{ form.name.id_for_label }}" class="form-label">
                   Recipe Name: <span class="text-danger">*</span>
                 </label>
                 {{ form.name }}
               </div>
-              <!-- Cooking Time (Required) -->
+
+              <!-- Cooking Time -->
               <div class="mb-3">
                 <label for="{{ form.cooking_time.id_for_label }}" class="form-label">
                   Cooking Time (minutes): <span class="text-danger">*</span>
                 </label>
                 {{ form.cooking_time }}
               </div>
-              <!-- Ingredients (Required) -->
+
+              <!-- Ingredients -->
               <div class="mb-3">
                 <label for="{{ form.ingredients.id_for_label }}" class="form-label">
                   Ingredients (comma-separated): <span class="text-danger">*</span>
                 </label>
                 {{ form.ingredients }}
               </div>
-              <!-- Description (Required) -->
+
+              <!-- Description -->
               <div class="mb-3">
                 <label for="{{ form.description.id_for_label }}" class="form-label">
                   Description: <span class="text-danger">*</span>
                 </label>
                 {{ form.description }}
               </div>
+
               <!-- Recipe Image Upload (Optional) -->
               <div class="mb-3">
                 <label for="{{ form.pic.id_for_label }}" class="form-label">Upload New Image:</label>
-                <!-- Manually creating the file input field instead of using "{{ form.pic }}" -->
-                <!-- {{ form.pic }} renders Django's default file input, including unwanted elements -->
                 <input type="file" name="{{ form.pic.html_name }}" id="{{ form.pic.id_for_label }}"
                   class="form-control">
               </div>
-              <!-- Save Recipe Button -->
+
+              <!-- Save Recipe and Back to Recipe Buttons -->
               <div class="d-flex justify-content-between mt-3">
                 <button type="submit" class="btn btn-secondary flex-grow-1 me-2">
                   Save Recipe
@@ -107,15 +109,15 @@
                   Back to {{recipe.name}}
                 </a>
               </div>
+
             </form>
 
-            <!-- Delete Recipe Button (with confirmation) -->
+            <!-- Delete Recipe Button -->
             <div class="d-flex justify-content-between mt-3">
               <form action="{% url 'recipes:delete_recipe' pk=recipe.pk %}" method="POST"
                 onsubmit="return confirmDelete()" class="w-100">
                 {% csrf_token %}
-                <button type="submit" class="btn btn-warning flex-grow-1 me-2 w-100">Delete
-                  Recipe</button>
+                <button type="submit" class="btn btn-warning flex-grow-1 me-2 w-100">Delete Recipe</button>
               </form>
             </div>
 
@@ -126,12 +128,14 @@
               }
             </script>
             {% endif %}
+
           </div>
         </div>
       </div>
     </div>
   </div>
 
+  <!-- JavaScript to prevent navigating back to a deleted (cached) form -->
   <script>
     window.addEventListener("pageshow", function (event) {
       if (event.persisted || (window.performance && window.performance.navigation.type === 2)) {

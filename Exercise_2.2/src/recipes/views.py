@@ -1,30 +1,43 @@
-from django.shortcuts import render, redirect, get_object_or_404                 # imported render and redirect ( imported by default? )
-from .models import Recipe                                                       # to access the Recipe model
-from django.views.generic import ListView, DetailView                            # to display lists and details
-from django.contrib.auth.mixins import LoginRequiredMixin                        # to protect class-based view
-from django.contrib.auth.decorators import login_required                        # to protect function-based view
-from django.contrib.auth import authenticate, login, logout                      # Django authentication libraries
-from django.contrib.auth.forms import AuthenticationForm                         # Django Form for authentication
-from django.contrib import messages                                              # import Django messages framework
+# Django Shortcuts (Common Utility Functions)
+from django.shortcuts import render, redirect, get_object_or_404
+
+# Django Class-Based Views (CBVs)
+from django.views.generic import ListView, DetailView
+
+# Authentication & Authorization
+from django.contrib.auth.mixins import LoginRequiredMixin     # Protect CBVs
+from django.contrib.auth.decorators import login_required     # Protect FBVs
+from django.contrib.auth import authenticate, login, logout   # Django authentication libraries
+from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.models import User
-from .forms import RecipeSearchForm, SignupForm, CreateRecipeForm                # import RecipeSearchForm, SignupForm, and CreateRecipeForm classes
-import pandas as pd                                                              # import pandas. refer to it as 'pd'
-from .utils import get_chart                                                     # to call the get_chart() function
+
+# Forms & Models
+from .models import Recipe
+from .forms import RecipeSearchForm, SignupForm, CreateRecipeForm
+
+# Utilities & Additional Libraries
+import pandas as pd
+from .utils import get_chart
+
+# Django Utlities
 from django.utils.timezone import now, localtime
-from django.http import HttpResponseRedirect, Http404
 from django.urls import reverse
 from django.db.models import Q
-from django.http import JsonResponse
+from django.http import HttpResponseRedirect, Http404, JsonResponse
+from django.contrib import messages     # Django Messages Framework
 
-class RecipeListView(LoginRequiredMixin, ListView):           # class-based "protected" view
-  model = Recipe                                              # specify model
-  template_name = 'recipes/recipes_home.html'                 # specify template
+class RecipeListView(LoginRequiredMixin, ListView):
+  """ Protected ListView that displays all recipes for logged-in users. """
+  model = Recipe
+  template_name = 'recipes/recipes_home.html'
 
-class RecipeDetailView(LoginRequiredMixin, DetailView):       # class-based "protected" view
-  model = Recipe                                              # specify model
-  template_name = 'recipes/recipe_details.html'               # specify template
+class RecipeDetailView(LoginRequiredMixin, DetailView):
+  """ Protected DetailView that displays a single recipe's details for logged-in users. """
+  model = Recipe
+  template_name = 'recipes/recipe_details.html'
 
   def get_object(self, queryset=None):
+    """ Override get_object() to handle cases where a recipe no longer exists. Displays an error message and returns None if the recipe is deleted. """
     try:
       return super().get_object(queryset)
     except Recipe.DoesNotExist:
@@ -32,24 +45,32 @@ class RecipeDetailView(LoginRequiredMixin, DetailView):       # class-based "pro
       return None
     
   def get(self, request, *args, **kwargs):
+    """ Override get() to check if the recipe exists before rendering. If the recipe is missing, redirect to the recipes list page. """
     obj = self.get_object()
     if obj is None:
-      return HttpResponseRedirect(reverse('recipes:recipe_list')) # Redirect to list page
+      return HttpResponseRedirect(reverse('recipes:recipe_list'))
     return super().get(request, *args, **kwargs)
 
 def home(request):
+  """ Render homepage for all users (publicly accessible). Displays landing page with an intro to BiteBase. """
   return render(request, 'recipes/recipes_home.html')
 
 @login_required
 def recipe_list(request):
-  form = RecipeSearchForm(request.GET or None) # Create an instance of RecipeSearchForm that was defined in recipes/forms.py. Allow GET requests for filtering
+  """ Display the list of recipes, apply search filters, and generate charts. """
+  
+  form = RecipeSearchForm(request.GET or None)
+  
+  # Retrieve and remove any stored message about a deleted recipe
   deleted_recipe_message = request.session.pop('deleted_recipe_message', None)
 
+  # Determine which recipes to show: Superusers see all; regular users see only their own
   if request.user.is_superuser:
     qs_recipes = Recipe.objects.filter(Q(user=request.user) | Q(user__isnull=True))
   else:
     qs_recipes = Recipe.objects.filter(user=request.user)
 
+  # If a non-superuser has no recipes, clone public recipes for them
   if not qs_recipes.exists() and not request.user.is_superuser:
     public_recipes = Recipe.objects.filter(user__isnull=True)
     
@@ -64,48 +85,49 @@ def recipe_list(request):
         pic=recipe.pic,
       )
 
-    # Get all superuser-created public recipes
+    # Fetch updated list of user-specific recipes
     qs_recipes = Recipe.objects.filter(user=request.user)
 
+  # Get user's display name (use full name if available, otherwise username)
   display_name = request.user.get_full_name() if request.user.get_full_name() else request.user.username
 
   recipes_df = None
   chart = None
   chart_error_msg = None
 
-  # Get search input from the form
+  # Retrieve user search inputs
   recipe_name = request.GET.get('recipe_name', '').strip()
   ingredient = request.GET.get('ingredient', '').strip()
   difficulty = request.GET.get('difficulty', '')
   chart_type = request.GET.get('chart_type', '')
 
-  # Apply filters based on user input (only if any filter is present)
+  # Apply filters if any search criteria are provided
   if recipe_name or ingredient or difficulty:
     if recipe_name:
-      qs_recipes = qs_recipes.filter(name__icontains=recipe_name) # Partial match
+      qs_recipes = qs_recipes.filter(name__icontains=recipe_name)
     if ingredient:
-      qs_recipes = qs_recipes.filter(ingredients__icontains=ingredient) # Partial match
+      qs_recipes = qs_recipes.filter(ingredients__icontains=ingredient)
     if difficulty:
-      qs_recipes = qs_recipes.filter(difficulty=difficulty) # Exact match
+      qs_recipes = qs_recipes.filter(difficulty=difficulty)
 
   no_results_message = 'No recipes match your search criteria.' if not qs_recipes.exists() else None
 
-  if qs_recipes.exists(): # Convert the QuerySet to a Pandas DataFrame (if there are matching recipes/results)
-    recipes_df = pd.DataFrame(qs_recipes.values()) # Convert QuerySet to DataFrame
-    recipes_df = recipes_df.to_html() # Convert DataFrame to HTML table
+  # Convert QuerySet to DataFrame and convert DataFrame to HTML table (if results exist)
+  if qs_recipes.exists():
+    recipes_df = pd.DataFrame(qs_recipes.values())
+    recipes_df = recipes_df.to_html()
 
-    if chart_type: # Generate chart if a chart type is selected
+    if chart_type:
       chart = get_chart(chart_type, pd.DataFrame(qs_recipes.values()))
-      if chart is None: # Check if get_chart() returned None
+      if chart is None:
         chart_error_msg = 'Invalid chart type selected. Please choose a valid chart.'
 
-  # Pass recipes, form, and chart to the template (recipes_list.html file)
   return render(request, 'recipes/recipes_list.html', {
-    'object_list': qs_recipes,            # Pass the filtered recipes 
-    'form': form,                         # Pass the search form
-    'recipes_df': recipes_df,             # Pass the DataFrame for table display
-    'chart': chart,                       # Pass the generated chart
-    'chart_error_msg': chart_error_msg,   # Pass the chart error message
+    'object_list': qs_recipes, # 'object_list' is default naming and is really just 'qs_recipes'
+    'form': form,
+    'recipes_df': recipes_df,
+    'chart': chart,
+    'chart_error_msg': chart_error_msg,
     'deleted_recipe_message': deleted_recipe_message,
     'no_results_message': no_results_message,
     'display_name': display_name
@@ -113,26 +135,41 @@ def recipe_list(request):
 
 @login_required
 def create_recipe_view(request):
-  error_message = None # Initialize error_message variable
-  success_message = None # Initialize success_message variable
-  recipe = None # Initialize recipe variable
+  """ Allow users to create a new recipe. Superusers can create public recipes. """
+
+  error_message = None
+  success_message = None
+  recipe = None
 
   if request.method == 'POST':
-    form = CreateRecipeForm(request.POST, request.FILES) # Include FILES for image uploads
+    # Include FILES for image uploads
+    form = CreateRecipeForm(request.POST, request.FILES)
+    
     if form.is_valid():
-      recipe = form.save(commit=False) # Save the new recipe to the database
+      # Save the new recipe but do not commit yet
+      recipe = form.save(commit=False)
       
-      if request.user.is_superuser: # If superuser creates a recipe, set it as public (user=None)
-        recipe.user = None # Public recipes for all users
+      # If superuser creates a recipe, set it as public (user=None)
+      if request.user.is_superuser:
+        # Public recipe (accessible for all users)
+        recipe.user = None
       else:
-        recipe.user = request.user # Private recipe for the specific user
+        # Private recipe (owned by the specific user)
+        recipe.user = request.user
+
+      # Save finalized recipe
       recipe.save()
       success_message = f'"{recipe.name}" created successfully!'
-      form = CreateRecipeForm() # Reset the form
+      # Reset form after successful submission
+      form = CreateRecipeForm()
+
     else:
-      error_message = form.errors.as_ul() # Display form errors
+      # Capture and display form validation errors
+      error_message = form.errors.as_ul()
+
   else:
-    form = CreateRecipeForm() # Display an empty form
+    # Display empty form for GET requests
+    form = CreateRecipeForm()
 
   context = {
     'form': form,
@@ -145,6 +182,9 @@ def create_recipe_view(request):
 
 @login_required
 def edit_recipe_view(request, pk):
+  """ Allow users to edit an existing recipe. """
+
+  # Retrieve recipe by primary key
   recipe = Recipe.objects.filter(pk=pk).first()
 
   if recipe is None:
@@ -153,88 +193,130 @@ def edit_recipe_view(request, pk):
 
   if request.method == 'POST':
     form = CreateRecipeForm(request.POST, request.FILES, instance=recipe)
+
     if form.is_valid():
       form.save()
       success_message = f'"{recipe.name}" has been successfully updated!'
-      return render(request, 'recipes/edit_recipe.html', {'success_message': success_message, 'recipe': recipe}) # Load the edit recipe form template (Once recipe is updated, user is sent back to view the recipe)
+      
+      # Reload form after updating recipe, displaying success message
+      return render(
+        request, 
+        'recipes/edit_recipe.html', 
+        {'success_message': success_message, 'recipe': recipe}
+      )
+    
     else:
       error_message = form.errors.as_ul()
-  else:
-    form = CreateRecipeForm(instance=recipe) # Populate the form with the existing recipe data
 
-  return render(request, 'recipes/edit_recipe.html', {
-    'form': form, # Pass form object
-    'recipe': recipe, # Pass recipe object
-  })
+  else:
+    # Pre-populate form with existing recipe data
+    form = CreateRecipeForm(instance=recipe)
+
+  return render(
+    request, 
+    'recipes/edit_recipe.html', {
+      'form': form, 
+      'recipe': recipe,
+    },
+  )
 
 @login_required
 def delete_recipe_view(request, pk):
-  recipe = get_object_or_404(Recipe, pk=pk) # Retrieve the recipe object from the database or return a 404 error if not found
+  """ Handles recipe deletion, ensuring proper redirection and session message. """
+  
+  # Retrieve recipe object or return a 404 if not found
+  recipe = get_object_or_404(Recipe, pk=pk)
   
   if request.method == 'POST':
-    recipe_name = recipe.name # Store name before deleting
-    recipe.delete() # Delete the recipe from the database
+    # Store name before deletion
+    recipe_name = recipe.name
+    # Delete recipe from database
+    recipe.delete()
 
+    # Store success message in session to persist across redirection
     request.session['deleted_recipe_message'] = f'Recipe "{recipe_name}" was successfully deleted.'
 
+    # Handle AJAX request (if deletion was triggered via AJAX)
     if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
       return JsonResponse({'redicrect_url': reverse('recipes:recipe_list')})
     
-    return redirect('recipes:recipe_list') # Redirect to all recipes list
+    return redirect('recipes:recipe_list')
   
-  return redirect('recipes:recipe_list') # Redirect back if method is not POST
+  return redirect('recipes:recipe_list')
 
-def login_view(request): # define a function-based view "login_view", which shows a Login form based on Django's authentication form
-  error_message = None # initialize error_message to None
-  form = AuthenticationForm() # form object with username and password fields
+def login_view(request):
+  """ Handles user authentication using Django's built-in AuthenticationForm. """
 
-  # when the user hits "Login" button, a POST request will be generated
+  error_message = None
+  form = AuthenticationForm()
+
+  # Process form submission when the user clicks "Login" button
   if request.method == 'POST':
-    form = AuthenticationForm(data = request.POST) # read the data sent by the form via POST request
+    # Populate form with submitted data
+    form = AuthenticationForm(data = request.POST)
 
-    if form.is_valid():                                 # check if the form is valid
-      username = form.cleaned_data.get('username')      # read username
-      password = form.cleaned_data.get('password')      # read password
-      user = authenticate(username = username, password = password) # use Django authenticate function to validate the user
+    if form.is_valid():
+      username = form.cleaned_data.get('username')
+      password = form.cleaned_data.get('password')
+      # Use Django 'authenticate' function to authenticate user
+      user = authenticate(username = username, password = password)
       
       if user is not None:
-        # if user is authenticated, use pre-defined Django function to login
+        # if user is authenticated, use pre-defined Django function to log in
         login(request, user)
-        return redirect('recipes:recipe_list') # and send user to desired page
-      else: # in case of error
-        error_message = 'Oops... something went wrong!' # print error message
+        return redirect('recipes:recipe_list')
+      else:
+        error_message = 'Oops... something went wrong!'
 
-  # prepare data to send from view to template
   context = {
-    'form': form, # send the form data
-    'error_message': error_message, # and the error message
+    'form': form,
+    'error_message': error_message,
   }
-  return render(request, 'recipes/auth/login.html', context)    # load the login page using "context" information
 
-def logout_view(request):           # define a function-based view "logout_view" that takes a request from a user
-  logout(request)                   # use the pre-defined Django function to logout the user
-  return redirect('recipes:logout_success') # finds a named URL in urls.py and redirects there AFTER logout so timestamp persists
+  return render(request, 'recipes/auth/login.html', context)
+
+def logout_view(request):
+  """ Logs out the user and redirects to the logout success page. """
+  
+  # Logs out current user with pre-defined Django function
+  logout(request)
+  
+  return redirect('recipes:logout_success')
 
 def logout_success(request):
+  """ Displays the logout success page with the timestamp of logout. """
+  
+  # Format logout time
   logout_time = localtime(now()).strftime('%m/%d/%Y @ %I:%M %p')
-  return render(request, 'recipes/auth/logout_success.html', {'logout_time': logout_time}) # finds HTML file and renders it
+
+  return render(request, 'recipes/auth/logout_success.html', {'logout_time': logout_time})
 
 def signup_view(request):
-  error_message = None # Initialize error_message variable
-  success_message = None # Initialize success_message variable
-  form = SignupForm() # Initialize form variable
+  """ Handles user signup, form validation, and automatic login after successful signup. """
 
-  if request.method == 'POST': # Check if the request is a POST request, If it is, process the form
-    form = SignupForm(request.POST) # Receives user input
+  error_message = None
+  success_message = None
+  form = SignupForm()
+
+  # Check if request is a form submission (POST request)
+  if request.method == 'POST':
     
-    if form.is_valid(): # If the form is valid
-      user = form.save() # Save the user to the database
-      login(request, user) # Automatically log in the user
+    # Populate form with submitted user data
+    form = SignupForm(request.POST)
+    
+    if form.is_valid():
+      # Save the new user to the database
+      user = form.save()
+      # Automatically log in the user after signup
+      login(request, user)
       success_message = 'User has been successfully created!'
 
-      superuser = User.objects.get(username='evandanowitz')
-      public_recipes = Recipe.objects.filter(user=superuser)
+      # Clone public recipes from the superuser to the newly created user
+      superuser = User.objects.get(username='evandanowitz') # Retrieve the superuser account
+      public_recipes = Recipe.objects.filter(user=superuser) # Get all public recipes
+      
       for recipe in public_recipes:
+        # Create a copy of each public recipe for the new user
         Recipe.objects.create(
           user=user,
           name=recipe.name,
@@ -245,32 +327,43 @@ def signup_view(request):
           pic=recipe.pic,
         )
 
-      form = SignupForm() # Reset the form after successful signup
+      # Reset form after successful signup
+      form = SignupForm()
 
-    else: # If form is invalid, display actual errors
-      error_message = form.errors.as_ul() # Display detailed error messages
+    else:
+      # Display detailed error messages for invalid form submission
+      error_message = form.errors.as_ul()
 
-  context = { # Prepare context dictionary to pass data to the template
-    'form': form, # The signup form instance (either empty or filled with user input)
-    'error_message': error_message, # Error message to display if form validation fails
-    'success_message': success_message, # Pass success message to template
+  context = {
+    'form': form,
+    'error_message': error_message,
+    'success_message': success_message,
   }
-  return render(request, 'recipes/auth/signup.html', context) # Render the signup page with the provided context
+
+  return render(request, 'recipes/auth/signup.html', context)
 
 def about_me_view(request):
+  """ Renders the About Me page. """
+  
   return render(request, 'recipes/about_me.html')
 
 @login_required
 def profile_view(request):
+  """ Renders the user profile page with relevant account details and a button for account deletion. """
+  
+  # Retrieve user's name
   display_name = request.user.get_full_name()
 
+  # If name is empty or blank, default to username
   if not display_name.strip():
     display_name = request.user.username
   
+  # Retrieve name or set default message if not provided
   name = request.user.get_full_name()
   if not name.strip():
     name = 'Name not created at signup'
 
+  # Retrieve email or set default message if not provided
   email = request.user.email
   if not email:
     email = 'Email not created at signup'
@@ -286,9 +379,16 @@ def profile_view(request):
 
 @login_required
 def delete_account_view(request):
+  """ Handles user account deletion and logs out the user. """
+
   if request.method == 'POST':
+    # Retrieve the currently logged-in user
     user = request.user
+    # Display success message before deleting account
     messages.success(request, 'Your account has been deleted successfully.')
+    # Permanently delete user account
     user.delete()
+    # Log out user after deletion
     logout(request)
+    # Redirect user to home page
     return redirect('recipes:home')

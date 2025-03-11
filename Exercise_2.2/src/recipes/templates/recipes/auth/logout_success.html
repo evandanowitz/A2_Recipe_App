@@ -1,7 +1,5 @@
 <!DOCTYPE html>
-
 {% load static %}
-
 <html lang="en">
 
 <head>
@@ -12,8 +10,11 @@
 </head>
 
 <body class="d-flex align-items-center justify-content-center vh-100">
+
   <img src="{% static 'recipes/images/various-grocery-products-concrete-surface.jpg' %}" class="background-img"
     alt="Background Image">
+
+  <!-- Logout Message -->
   <div class="text-center">
     <h1>You've successfully logged out.</h1>
     <hr>
@@ -23,6 +24,7 @@
     <br>
     <a href="{% url 'recipes:home' %}" class="btn btn-secondary">Back to Home</a>
   </div>
+
 </body>
 
 </html>
