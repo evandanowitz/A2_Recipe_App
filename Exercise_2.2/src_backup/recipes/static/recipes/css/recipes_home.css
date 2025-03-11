@@ -1,0 +1,70 @@
+body {
+  margin: 0;
+  font-family: Coolvetica, sans-serif;
+}
+
+.background-img {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  object-fit: cover;
+  opacity: 0.55;
+  z-index: -1;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  position: relative;
+  text-align: center;
+  color: #000;
+}
+
+.header-msg h1 {
+  font-size: 128px;
+  animation: fadeIn 2s ease-in-out;
+  text-shadow: 3px 3px 10px rgba(0, 0, 0, 0.2);
+}
+.header-msg p {
+  font-size: 24px;
+  font-weight: 500;
+  text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.welcome-buttons {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 2;
+  margin-top: 50px;
+  gap: 20px;
+}
+
+.btn-custom {
+  width: 250px;
+  padding: 15px 0;
+  font-size: 22px;
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  background: rgba(0, 0, 0, 0.7);
+  color: #fff;
+  border: none;
+  border-radius: 50px;
+  transition: all 0.3s ease-in-out;
+  box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.3);
+}
+.btn-custom:hover {
+  color: white;
+  transform: translateY(-5px);
+  filter: brightness(1.2);
+}
+.btn-custom:active {
+  box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.3);
+  transform: scale(1);
+}

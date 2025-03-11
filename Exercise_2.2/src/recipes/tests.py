@@ -168,17 +168,49 @@ class SearchFormTest(TestCase):
 class RecipeSearchTest(TestCase):
   @classmethod
   def setUpTestData(cls):
-    # Creates a test user
     cls.user = User.objects.create_user(
       username = 'testuser',
       password = 'testpassword'
     )
     # Create test recipes for filtering
-    cls.cake = Recipe(name = 'Chocolate Cake', cooking_time = 45, ingredients = 'flour, sugar, cocoa', difficulty = 'Hard', description = 'A rich chocolate cake')
-    cls.ice_cream = Recipe(name = 'Vanilla Ice Cream', cooking_time = 10, ingredients = 'milk, sugar, vanilla', difficulty = 'Easy', description = 'Homemade vanilla ice cream')
-    cls.chicken = Recipe(name = 'Grilled Chicken', cooking_time = 30, ingredients = 'chicken, salt, pepper', difficulty = 'Medium', description = 'Grilled chicken breast')
-    cls.soup = Recipe(name = 'Tomato Soup', cooking_time = 15, ingredients = 'tomato, salt, basil', difficulty = 'Easy', description = 'A warm tomato soup')
-    
+    cls.cake = Recipe(
+      user = cls.user,
+      name = 'Chocolate Cake', 
+      cooking_time = 45, 
+      ingredients = 'flour, sugar, cocoa', 
+      difficulty = 'Hard', 
+      description = 'A rich chocolate cake'
+    )
+    cls.ice_cream = Recipe(
+      user = cls.user,
+      name = 'Vanilla Ice Cream', 
+      cooking_time = 10, 
+      ingredients = 'milk, sugar, vanilla', 
+      difficulty = 'Easy', 
+      description = 'Homemade vanilla ice cream'
+    )
+    cls.chicken = Recipe(
+      user = cls.user,
+      name = 'Grilled Chicken', 
+      cooking_time = 30, 
+      ingredients = 'chicken, salt, pepper', 
+      difficulty = 'Medium', 
+      description = 'Grilled chicken breast'
+    )
+    cls.soup = Recipe(
+      user = cls.user,
+      name = 'Tomato Soup', 
+      cooking_time = 15, 
+      ingredients = 'tomato, salt, basil', 
+      difficulty = 'Easy', 
+      description = 'A warm tomato soup'
+    )
+
+    print("\n\n==== Recipes in Test Database ====")
+    for recipe in Recipe.objects.all():
+      print(f"- {recipe.name} (Difficulty: {recipe.difficulty}, User: {recipe.user})")
+    print("===================================\n\n")
+
     # Manually set difficulty levels before saving
     cls.cake.difficulty = 'Hard'
     cls.ice_cream.difficulty = 'Easy'
@@ -204,6 +236,7 @@ class RecipeSearchTest(TestCase):
 
   def test_search_by_difficulty(self):
     response = self.client.get(reverse('recipes:recipe_list'), {'difficulty': 'Easy'})
+
     self.assertContains(response, 'Vanilla Ice Cream') # Should appear
     self.assertContains(response, 'Tomato Soup') # Should appear
     self.assertNotContains(response, 'Chocolate Cake') # Should NOT appear ('Hard')
@@ -294,3 +327,153 @@ class AccessControlTest(TestCase):
     # Ensure that individual recipe detail pages load
     response = self.client.get(reverse('recipes:recipe_detail', args = [self.recipe.id]))
     self.assertEqual(response.status_code, 200) # Page should load correctly
+
+# ========================
+# Create Recipe View Tests
+# ========================
+
+class CreateRecipeTest(TestCase):
+  @classmethod
+  def setUpTestData(cls):
+    cls.user = User.objects.create_user(username='testuser', password='testpassword')
+
+  def setUp(self):
+    self.client.login(username='testuser', password='testpassword')
+
+  def test_create_recipe_page_loads(self):
+    """ Ensure the create recipe page loads successfully """
+    response = self.client.get(reverse('recipes:create_recipe'))
+    self.assertEqual(response.status_code, 200)
+    self.assertTemplateUsed(response, 'recipes/create_recipe.html')
+
+  def test_create_recipe_success(self):
+    """ Ensure a valid recipe is successfully created """
+    response = self.client.post(reverse('recipes:create_recipe'), {
+      'name': 'Test Recipe',
+      'cooking_time': 20,
+      'ingredients': 'salt, pepper, chicken',
+      'description': 'A test recipe',
+    })
+    self.assertEqual(response.status_code, 200)  # Page reloads on success
+    self.assertTrue(Recipe.objects.filter(name='Test Recipe').exists())  # Recipe was created
+
+# ======================
+# Edit Recipe View Tests
+# ======================
+
+class EditRecipeTest(TestCase):
+  @classmethod
+  def setUpTestData(cls):
+    cls.user = User.objects.create_user(username='testuser', password='testpassword')
+    cls.recipe = Recipe.objects.create(
+      user=cls.user, name='Old Recipe', cooking_time=15, ingredients='sugar, flour', difficulty='Easy', description='Old description'
+    )
+
+  def setUp(self):
+    self.client.login(username='testuser', password='testpassword')
+
+  def test_edit_recipe_page_loads(self):
+    """ Ensure the edit recipe page loads successfully """
+    response = self.client.get(reverse('recipes:edit_recipe', args=[self.recipe.id]))
+    self.assertEqual(response.status_code, 200)
+
+  def test_edit_recipe_success(self):
+    """ Ensure a recipe can be successfully edited """
+    response = self.client.post(reverse('recipes:edit_recipe', args=[self.recipe.id]), {
+      'name': 'Updated Recipe',
+      'cooking_time': 25,
+      'ingredients': 'sugar, flour, eggs',
+      'description': 'Updated description',
+    })
+    self.recipe.refresh_from_db()
+    self.assertEqual(self.recipe.name, 'Updated Recipe')  # Recipe should update
+
+# ========================
+# Delete Recipe View Tests
+# ========================
+
+class DeleteRecipeTest(TestCase):
+  @classmethod
+  def setUpTestData(cls):
+    cls.user = User.objects.create_user(username='testuser', password='testpassword')
+    cls.recipe = Recipe.objects.create(
+      user=cls.user, name='To Be Deleted', cooking_time=10, ingredients='flour, sugar', difficulty='Easy', description='Test'
+    )
+
+  def setUp(self):
+    self.client.login(username='testuser', password='testpassword')
+
+  def test_delete_recipe(self):
+    """ Ensure a recipe is deleted successfully """
+    response = self.client.post(reverse('recipes:delete_recipe', args=[self.recipe.id]))
+    self.assertFalse(Recipe.objects.filter(id=self.recipe.id).exists())  # Recipe should be deleted
+
+# =================
+# Signup View Tests
+# =================
+
+class SignupTest(TestCase):
+  @classmethod
+  def setUpTestData(cls):
+    """ Create a test superuser to avoid 'User.DoesNotExist' error. """
+    cls.superuser = User.objects.create_superuser(username='evandanowitz', password='testpassword')
+
+  def test_signup_page_loads(self):
+    """ Ensure signup page loads successfully """
+    response = self.client.get(reverse('recipes:signup'))
+    self.assertEqual(response.status_code, 200)
+
+  def test_signup_success(self):
+    """ Ensure a user can successfully sign up """
+    response = self.client.post(reverse('recipes:signup'), {
+      'username': 'newuser',
+      'password1': 'Testpassword123!',
+      'password2': 'Testpassword123!',
+    })
+    self.assertTrue(User.objects.filter(username='newuser').exists())  # User should exist
+
+# ==================
+# About Me View Test
+# ==================
+
+class AboutMeTest(TestCase):
+  def test_about_me_page_loads(self):
+    """ Ensure the About Me page loads successfully """
+    response = self.client.get(reverse('recipes:about_me'))
+    self.assertEqual(response.status_code, 200)
+    self.assertTemplateUsed(response, 'recipes/about_me.html')
+
+# ==================
+# Profile View Tests
+# ==================
+
+class ProfileTest(TestCase):
+  @classmethod
+  def setUpTestData(cls):
+    cls.user = User.objects.create_user(username='testuser', password='testpassword')
+
+  def setUp(self):
+    self.client.login(username='testuser', password='testpassword')
+
+  def test_profile_page_loads(self):
+    """ Ensure profile page loads for logged-in users """
+    response = self.client.get(reverse('recipes:profile'))
+    self.assertEqual(response.status_code, 200)
+    self.assertContains(response, 'testuser')  # Ensure username is displayed
+
+# ========================
+# Delete Account View Test
+# ========================
+
+class DeleteAccountTest(TestCase):
+  @classmethod
+  def setUpTestData(cls):
+    cls.user = User.objects.create_user(username='testuser', password='testpassword')
+
+  def setUp(self):
+    self.client.login(username='testuser', password='testpassword')
+
+  def test_delete_account(self):
+    """ Ensure a user can delete their account """
+    response = self.client.post(reverse('recipes:delete_account'))
+    self.assertFalse(User.objects.filter(username='testuser').exists())  # User should be deleted

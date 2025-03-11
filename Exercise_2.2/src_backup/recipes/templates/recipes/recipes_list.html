@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+
+<head>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="{% static 'recipes/css/recipes_list.css' %}">
+  <link rel="icon" type="image/x-icon" href="{% static 'recipes/images/favicon.ico' %}">
+  <title>BiteBase - Recipes</title>
+</head>
+
+{% if messages %}
+{% for message in messages %}
+<div class="alert alert-success alert-dismissable fade show text-center" role="alert">
+  {{ message }}
+  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+{% endfor %}
+{% endif %}
+
+{% if deleted_recipe_message %}
+<div class="alert alert-success alert-dismissable fade show text-center" role="alert">
+  {{ deleted_recipe_message }}
+  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+{% endif %}
+
+<body>
+
+  <div class="container mt-4">
+
+    <div class="row justify-content-center">
+      <div class="col text-center">
+        <h1 class="me-auto">Recipes</h1>
+      </div>
+    </div>
+
+    <!-- Create Recipe, Profile, About, and Logout Buttons -->
+    <div class="row mb-3">
+      <div class="col d-flex justify-content-center gap-2">
+        <button id="toggleButton" class="btn btn-lg btn-warning shadow search-form-btn" type="button"
+          data-bs-toggle="collapse" data-bs-target="#searchForm">Search</button>
+        <a href="{% url 'recipes:create_recipe' %}" class="btn btn-lg btn-warning shadow logout-btn">Create Recipe</a>
+        <a href="{% url 'recipes:profile' %}" class="btn btn-lg btn-warning shadow logout-btn">Profile</a>
+        <a href="{% url 'recipes:about_me' %}" class="btn btn-lg btn-warning shadow logout-btn">About</a>
+        <a href="{% url 'recipes:logout' %}" class="btn btn-lg btn-warning shadow logout-btn">Logout</a>
+      </div>
+    </div>
+
+    <div class="row justify-content-center">
+      <div class="col lg-8">
+        <div class="alert alert-secondary text-center display-name">
+          <h4>Welcome, {{ display_name }}!</h4>
+        </div>
+      </div>
+    </div>
+
+    <!-- Search Form -->
+    <div class="row justify-content-center collapse" id="searchForm">
+      <div class="col-lg-8">
+        <div class="card shadow">
+          <div class="card-body">
+
+            <h4 class="card-title text-center">Search for Recipes</h4>
+            <hr>
+
+            <form action="" method="GET">
+              {% csrf_token %}
+
+              <div class="row mb-3">
+                <div class="col-6 col-md-6">{{ form.recipe_name }}</div>
+                <div class="col-6 col-md-6">{{ form.ingredient }}</div>
+              </div>
+
+              <div class="row mb-3">
+                <div class="col-6 col-md-6">{{ form.difficulty }}</div>
+                <div class="col-6 col-md-6">{{ form.chart_type }}</div>
+              </div>
+
+              <!-- Search and Reset Buttons -->
+              <div class="row">
+                <div class="text-center d-flex justify-content-center gap-4">
+                  <button type="submit" class="btn btn-secondary w-50 search-btn">Search</button>
+                  <a href="{% url 'recipes:recipe_list' %}" class="btn btn-secondary w-50 reset-btn">Reset</a>
+                </div>
+              </div>
+
+            </form>
+
+          </div>
+        </div>
+      </div>
+    </div>
+    <br>
+
+    <!-- Alerts for No Results -->
+    {% if no_results_message %}
+    <div class="row justify-content-center">
+      <div class="col-lg-8">
+        <div class="alert alert-warning text-center" role="alert">
+          {{ no_results_message }}
+        </div>
+      </div>
+    </div>
+    {% endif %}
+    <!-- Alerts for Chart Error -->
+    {% if chart_error_msg %}
+    <div class="row justify-content-center">
+      <div class="col-lg-8">
+        <div class="alert alert-danger text-center" role="alert">
+          {{ chart_error_msg }}
+        </div>
+      </div>
+    </div>
+    {% endif %}
+
+    <!-- Display Chart (if a chart was generated) -->
+    {% if chart %}
+    <div class="text-center">
+      <h4>
+        {% if form.chart_type.value == "#1" %}
+        Data Analysis – Bar Chart
+        {% elif form.chart_type.value == "#2" %}
+        Data Analysis – Pie Chart
+        {% elif form.chart_type.value == "#3" %}
+        Data Analysis – Line Chart
+        {% else %}
+        Data Visualization Chart
+        {% endif %}
+      </h4>
+
+      <!-- Displays chart as image -->
+      <img src="data:image/png;base64, {{ chart }}" class="img-fluid shadow-lg rounded mb-5" alt="Recipe Chart">
+    </div>
+    {% endif %}
+
+    <!-- Recipe Cards -->
+    <div class="row justify-content-center mt-3">
+      <div class="col-lg-10">
+        <div class="row">
+          {% for object in object_list %}
+          <div class="col-sm-6 col-md-4 col-lg-3 mb-4">
+            <div class="card h-100 shadow">
+              <img src="{{ object.pic.url }}" class="card-img-top" alt="{{ object.name }}">
+              <div class="card-body d-flex flex-column">
+                <h5 class="card-title">{{ object.name }}</h5>
+                <a href="{% url 'recipes:recipe_detail' object.id %}"
+                  class="btn btn-secondary mt-auto details-btn">Details</a>
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+
+    <!-- Bootstrap JavaScript for the "Collapse" feature to work -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- JavaScript function for Search form toggle button behavior -->
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        let toggleButton = document.getElementById("toggleButton");
+        let searchForm = document.getElementById("searchForm");
+
+        localStorage.setItem("searchFormOpen", "false");
+        searchForm.classList.remove("show");
+        toggleButton.textContent = "Search";
+
+        searchForm.addEventListener("show.bs.collapse", function () {
+          toggleButton.textContent = "Hide Search";
+        });
+
+        searchForm.addEventListener("hide.bs.collapse", function () {
+          toggleButton.textContent = "Search";
+        });
+
+        if (window.location.search) {
+          // Remove search parameters from URL without reloading page
+          window.history.replaceState({}, document.title, window.location.pathname);
+        }
+      });
+    </script>
+
+    <!-- Prevent Back Navigation Issues -->
+    <script>
+      window.addEventListener("pageshow", function (event) {
+        if (event.persisted || (window.performance && window.performance.navigation.type === 2)) {
+          // Force a hard refresh when navigating back
+          window.location.reload();
+        }
+      });
+    </script>
+
+  </div>
+
+</body>
+
+</html>

@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+
+<head>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="{% static 'recipes/css/recipe_details.css' %}">
+  <link rel="icon" type="image/x-icon" href="{% static 'recipes/images/favicon.ico' %}">
+  <title>BiteBase - Recipe Details</title>
+</head>
+
+<body class="d-flex align-items-center justify-content-center vh-100">
+
+  <!-- Display error messages if they exist -->
+  {% if messages %}
+  <div id="error-message" class="alert alert-danger text-center">
+    {% for message in messages %}
+    {{ message }}
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  <!-- Recipe Details Card -->
+  <div class="card shadow-lg card-container">
+
+    <!-- Recipe Image -->
+    <img src="{{ object.pic.url }}" class="card-img-top img-fluid" alt="{{ object.name }} image">
+
+    <!-- Recipe Details -->
+    <div class="card-body">
+      <h1 class="card-title text-center">{{ object.name }}</h1>
+      <hr>
+      <h5 class="text-muted"><strong>Cooking Time: </strong></h5>
+      <p>{{ object.cooking_time }} minutes</p>
+      <hr>
+      <h5 class="text-muted"><strong>Ingredients: </strong></h5>
+      <p>{{ object.ingredients }}</p>
+      <hr>
+      <h5 class="text-muted"><strong>Difficulty: </strong></h5>
+      <p>{{ object.difficulty }}</p>
+      <hr>
+      <h5 class="text-muted"><strong>Description: </strong></h5>
+      <p>{{ object.description }}</p>
+    </div>
+
+    <!-- Back to Recipes and Edit Recipe Buttons -->
+    <div class="card-footer text-center d-flex justify-content-center gap-3">
+      <a href="{% url 'recipes:recipe_list' %}" class="btn btn-secondary w-50">Back to Recipes</a>
+      <a href="{% url 'recipes:edit_recipe' pk=recipe.pk %}" class="btn btn-secondary w-50">Edit Recipe</a>
+    </div>
+  </div>
+
+  <!-- Prevents users from navigating back to a deleted recipe -->
+  <script>
+    window.addEventListener("pageshow", function (event) {
+      if (event.persisted || (window.performance && window.performance.navigation.type === 2)) {
+        window.location.replace("{% url 'recipes:recipe_list' %}");
+      }
+    });
+
+    history.pushState(null, "", location.href);
+    window.addEventListener("popstate", function () {
+      window.location.replace("{% url 'recipes:recipe_list' %}");
+    });
+  </script>
+
+</body>
+
+</html>
